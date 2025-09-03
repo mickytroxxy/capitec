@@ -24,3 +24,17 @@ export const Colors = {
     tabIconSelected: tintColorDark,
   },
 };
+
+export const colors = {
+  primary: '#40aef8ff',
+  secondary: '#007ACC',
+  tertiary: '#75d11fff',
+  white: '#fff',
+  black: '#000',
+  gray: '#666',
+  lightGray: '#E5E5E5',
+  faintGray:'#eceef1ff',
+  borderColor:'#cfcbcbff',
+  darkGreen: '#327334ff',
+  nedBank: '#006341', 
+}

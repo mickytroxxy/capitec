@@ -1,0 +1,82 @@
+import LinearButton from '@/components/ui/LinearButton';
+import TextField from '@/components/ui/TextField';
+import { colors } from '@/constants/Colors';
+import { Fonts } from '@/constants/Fonts';
+import { loginApi } from '@/firebase';
+import { useAuth } from '@/hooks/useAuth';
+import React, { useState } from 'react';
+import { Modal, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+export type ConfirmAddBeneficiaryModalProps = {
+  visible: boolean;
+  onClose: () => void;
+  onConfirm: (pin: string) => void;
+  title: string;
+  bankName?: string;
+  accountNumber?: string;
+};
+
+export default function ConfirmAddBeneficiaryModal({ visible, onClose, onConfirm, title, bankName, accountNumber }: ConfirmAddBeneficiaryModalProps) {
+  const [pin, setPin] = React.useState('');
+  React.useEffect(() => { if (!visible) setPin(''); }, [visible]);
+  const [errorText,setErrorText] = useState('');
+  const {accountInfo} = useAuth();
+  const handlePin = async() => {
+    const pinResponse = await loginApi(accountInfo?.accountNumber || '', pin);
+    if(pinResponse?.length > 0){
+      onConfirm(pin);
+    }else{
+      setErrorText('Invalid Remote PIN');
+    }
+  }
+  return (
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+      <Pressable style={styles.backdrop} onPress={onClose} />
+      <View style={styles.centered}>
+        <View style={styles.card}>
+          <Text style={styles.title}>{title}</Text>
+
+          {/* Bank summary */}
+          {bankName && accountNumber && (
+            <View style={styles.bankRow}>
+              <View style={styles.bankPill}>
+                <View style={styles.pillAccent} />
+                <View style={{flex:1}}>
+                  <Text style={styles.bankSubtitle}>{bankName} account</Text>
+                  <Text style={styles.bankAccount}>{accountNumber}</Text>
+                </View>
+              </View>
+            </View>
+          )}
+
+          {/* Remote PIN */}
+          <View style={{marginTop:10}}>
+            <TextField error={errorText} outline maxLength={6} label="Remote PIN" value={pin} onChangeText={setPin} keyboardType="number-pad" secureTextEntry />
+          </View>
+
+          {/* Actions */}
+          <View style={{marginTop:14}}>
+            <LinearButton title="Confirm" onPress={() => {handlePin()}} />
+          </View>
+          <TouchableOpacity style={{alignSelf:'center', paddingVertical:12}} onPress={onClose}>
+            <Text style={styles.cancel}>Cancel</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
+  );
+}
+
+const styles = StyleSheet.create({
+  backdrop: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.35)' },
+  centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
+  card: { width: '100%', borderRadius: 14, backgroundColor: colors.white, padding: 16, shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 12, shadowOffset: { width: 0, height: 6 }, elevation: 4 },
+  title: { fontSize: 14, color: '#111', textAlign: 'center', marginBottom: 10, fontFamily: Fonts.fontBold },
+  bankRow: { paddingHorizontal: 4 },
+  bankPill: { backgroundColor: '#f2f8f6ff', borderRadius: 10, padding: 10, flexDirection: 'row', alignItems: 'center' },
+  pillAccent: { width: 7, height: 32, borderRadius: 6, backgroundColor: colors.primary, marginRight: 10 },
+  bankSubtitle: { fontSize: 12, color: colors.gray, fontFamily: Fonts.fontRegular },
+  bankAccount: { fontSize: 14, color: '#111', fontFamily: Fonts.fontBold },
+  cancel: { color: colors.primary, fontFamily: Fonts.fontBold, fontSize: 14 },
+});
+

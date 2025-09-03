@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "capitecbank",
+    "name": "Capitec",
     "slug": "capitecbank",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -13,10 +13,11 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": false,
+      "package": "com.mickytroxxy.capitecbank"
     },
     "web": {
       "bundler": "metro",
@@ -37,6 +38,19 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "1669c9db-7792-49a0-914b-d02c8f7990a7"
+      }
+    },
+    "owner": "mickytroxxy",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/1669c9db-7792-49a0-914b-d02c8f7990a7"
     }
   }
 }
