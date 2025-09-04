@@ -128,6 +128,7 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     flex: 1,
+    gap:2
   },
   title: {
     fontSize: 14,
@@ -135,9 +136,9 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   subtitle: {
-    fontSize: 12,
+    fontSize: 14,
     fontFamily: Fonts.fontLight,
-    color: '#666',
+    color: '#4f4d4dff',
   },
   amount: {
     fontSize: 14,

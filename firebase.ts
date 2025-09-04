@@ -47,7 +47,7 @@ export const createData = async (tableName: string, docId: string, data: any): P
 
 export const getBeneficiaries = async (userId: string): Promise<any[]> => {
   try {
-    const querySnapshot = await getDocs(query(collection(db, "beneficiaries"), where("userId", "==", userId)));
+    const querySnapshot = await getDocs(query(collection(db, "beneficiaries"), where("userId", "==", parseFloat(userId))));
     const data = querySnapshot.docs.map((doc) => doc.data());
     return data;
   } catch (e) {

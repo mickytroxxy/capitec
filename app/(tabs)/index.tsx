@@ -8,26 +8,24 @@ import { colors } from '@/constants/Colors';
 import { Fonts } from '@/constants/Fonts';
 import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
 import {
   ChevronRight
 } from 'lucide-react-native';
 
 export const currencyFormatter = (amount: any) => {
   const formattedAmount = parseFloat(amount).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-  return `R ${formattedAmount}`;
+  return `R${formattedAmount}`;
 };
 export default function HomeScreen() {
   const { accountInfo } = useAuth();
   const router  = useRouter();
   return (
     <SafeAreaView style={{flex:1, backgroundColor:'#f5f5f5'}} edges={['left','right']}>
-      <StatusBar style="light" backgroundColor={colors.primary} />
       <ScrollView style={{flex:1,margin:-10}} showsVerticalScrollIndicator={false}>
         {/* My Dashboard Section */}
         <View style={[styles.section,{marginTop:26}]}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>My dashboard</Text>
+            <View style={{justifyContent:'center'}}><Text style={[styles.sectionTitle,{marginBottom:0}]}>My dashboard</Text></View>
             <TouchableOpacity style={{flexDirection:'row',alignItems:'center'}}>
               <Text style={styles.editText}>Edit</Text>
               <ChevronRight size={16} color={colors.primary} />
@@ -183,7 +181,7 @@ const styles = StyleSheet.create({
   },
   favouriteText: {
     fontSize: 14,
-    fontFamily: Fonts.fontLight,
+    fontFamily: Fonts.fontRegular,
     color: '#333',
     textAlign: 'center',
     lineHeight: 16,

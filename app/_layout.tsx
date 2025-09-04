@@ -8,7 +8,6 @@ import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { Platform, Text, TextInput, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -92,17 +91,18 @@ export default function RootLayout() {
 
   return (
     <Provider store={store}>
-      <StatusBar style="light" backgroundColor={colors.primary} />
       <PersistGate persistor={persistor}>
         <SafeAreaProvider>
           <Stack
             screenOptions={{
               headerShown: true,
-              headerStyle: { backgroundColor: colors.primary, },
-              headerTitleStyle: { color: '#fff', fontFamily: Fonts.fontMedium,fontSize:16 },
+              headerStyle: { backgroundColor: colors.primary },
+              headerTitleStyle: { color: '#fff', fontFamily: Fonts.fontMedium, fontSize: 16 },
               headerTintColor: '#fff',
+              headerTitleAlign: 'center',
+              statusBarStyle: 'light',
+              statusBarBackgroundColor: colors.primary,
               statusBarTranslucent: false,
-              headerTitleAlign:'center'
             }}
           >
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />

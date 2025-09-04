@@ -21,8 +21,8 @@ export default function YesNoSwitch({ value, onChange, style, yesLabel = 'YES', 
   }, [value]);
 
   // Track/knob dimensions
-  const TRACK_WIDTH = 76;
-  const TRACK_HEIGHT = 34;
+  const TRACK_WIDTH = 70;
+  const TRACK_HEIGHT = 28;
   const PADDING = 4;
   const KNOB_SIZE = TRACK_HEIGHT - PADDING * 2; // 26
 

@@ -7,6 +7,9 @@
     "icon": "./assets/images/icon.png",
     "scheme": "capitecbank",
     "userInterfaceStyle": "automatic",
+    "notification": {
+      "icon": "./assets/images/notification_icon.png"
+    },
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true
@@ -17,7 +20,10 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": false,
-      "package": "com.mickytroxxy.capitecbank"
+      "package": "com.mickytroxxy.capitecbank",
+      "notification": {
+        "icon": "./assets/images/notification_icon.png"
+      }
     },
     "web": {
       "bundler": "metro",

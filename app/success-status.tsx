@@ -4,9 +4,10 @@ import { colors } from '@/constants/Colors';
 import { Fonts } from '@/constants/Fonts';
 import { useAuth } from '@/hooks/useAuth';
 import { useProof } from '@/hooks/useProof';
-import { hideSuccess, SuccessButton } from '@/state/slices/successSlice';
+import { SuccessButton } from '@/state/slices/successSlice';
 import { RootState } from '@/state/store';
 import { router, Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import React, { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -23,7 +24,7 @@ export default function SuccessStatusScreen() {
   const isGenerating = false;
 
   const handleButtonPress = (button: SuccessButton) => {
-    dispatch(hideSuccess());
+    //dispatch(hideSuccess());
     
     switch (button.action.type) {
       case 'navigate':
@@ -76,9 +77,9 @@ export default function SuccessStatusScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['left', 'right']}>
+    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
       <Stack.Screen options={{ headerShown: false }} />
-
+      <StatusBar style="light" backgroundColor={colors.tertiary} />
       {/* Success banner */}
       <View style={styles.successHeader}>
         <Text style={styles.successTitle}>{title}</Text>

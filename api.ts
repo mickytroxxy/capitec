@@ -2,6 +2,18 @@
 import { updateTable } from '@/firebase';
 export type BankItem = { name: string; branch: string };
 
+// Additional app-level API methods
+export async function updateCardSettings(accountNumber: string, payload: Partial<{ onlinePurchases: boolean; internationalTransactions: boolean; tapToPay: boolean }>) {
+  try {
+    // Use the payments collection to store settings per account or a dedicated collection
+    // Here we reuse updateTable with a settings collection where docId = accountNumber
+    return await updateTable('card-settings', accountNumber, payload);
+  } catch (e) {
+    console.error('updateCardSettings failed', e);
+    return false;
+  }
+}
+
 // Source of truth for branch codes
 const bankBranchCodes: Record<string, string> = {
   'Capitec Bank': '470010',

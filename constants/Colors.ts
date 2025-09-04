@@ -26,7 +26,7 @@ export const Colors = {
 };
 
 export const colors = {
-  primary: '#40aef8ff',
+  primary: '#339ee6ff',
   secondary: '#007ACC',
   tertiary: '#75d11fff',
   white: '#fff',

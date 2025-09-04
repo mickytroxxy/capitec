@@ -54,6 +54,7 @@ export default function AddAccountScreen() {
         notificationType: form.notificationType,
         notificationValue: form.notificationValue,
         lastPaid: null,
+        userId: accountInfo?.id || 1,
       });
       const newBeneficiary = {
         id: Date.now(),

@@ -115,6 +115,7 @@ export default function PayBeneficiaryScreen() {
   useEffect(() => {
     (async() => {
       const response = await getBeneficiaries(accountInfo?.id as any || '');
+      console.log(response, accountInfo?.id)
       if(response?.length > 0){
         // Transform the data to include required properties for the UI
         const transformedBeneficiaries = response.map((beneficiary, index) => {
@@ -316,7 +317,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     margin: 8,
     marginTop: 3,
-    paddingHorizontal: 16,
+    paddingHorizontal: 10,
     paddingBottom:400
   },
   beneficiariesScroll: {

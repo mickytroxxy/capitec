@@ -1,7 +1,7 @@
-import useFetch, { BASE_URL } from "./useFetch";
-import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 import { Alert } from 'react-native';
+import useFetch, { BASE_URL } from "./useFetch";
 export const phoneNoValidation = (phone: string, countryCode: string): string | false => {
     countryCode = countryCode.slice(1, countryCode.length);
     let phoneNumber = phone.replace(/ /g, '');
@@ -47,34 +47,28 @@ export interface ProofOfPayment {
 export const useProof = () => {
     const {fetchData} = useFetch();
 
-    
     const generateProofOfPayment = async (data:ProofOfPayment) => {
         try {
             const response = await fetchData({endPoint:'/proof',method:'POST',data});
-            console.log(response)
+            console.log('PDF generation response:', response);
             if(response?.url){
                 if(data.notificationType === 'SHARE'){
                     const url = BASE_URL + response?.url;
                     await sharePDF(url);
                 }
-            } else {
-                Alert.alert('Error', 'Failed to generate proof of payment');
             }
         } catch (error) {
             console.error('Error generating proof of payment:', error);
-            Alert.alert('Error', 'Failed to generate proof of payment');
         }
     }
 
     const sharePDF = async (pdfUrl: string) => {
         try {
-            // Check if sharing is available
             if (!(await Sharing.isAvailableAsync())) {
                 Alert.alert('Error', 'Sharing is not available on this device');
                 return;
             }
 
-            // Download the PDF to local storage first
             const fileName = `proof_of_payment_${Date.now()}.pdf`;
             const localUri = `${FileSystem.documentDirectory}${fileName}`;
 

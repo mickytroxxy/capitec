@@ -11,14 +11,15 @@ export type TransactItem = {
   title: string;
   icon: { name: string; type: string };
   isNew?: boolean;
+  onPress?: () => void;
 };
 
 const groups: { id: string; items: TransactItem[] }[] = [
   {
     id: 'group-1',
     items: [
-      { id: 'pay-beneficiary', title: 'Pay beneficiary', icon: { name: 'users', type: 'Feather' } },
-      { id: 'payshap', title: 'PayShap', icon: { name: 'grid', type: 'Feather' } },
+      { id: 'pay-beneficiary', title: 'Pay beneficiary', icon: { name: 'users', type: 'Feather' }, onPress: () => router.push('/pay-beneficiary') },
+      { id: 'payshap', title: 'PayShap', icon: { name: 'grid', type: 'Feather' }, onPress: () => router.push('/cash-send') },
       { id: 'pay-bills', title: 'Pay bills', icon: { name: 'file-text', type: 'Feather' } },
       { id: 'cross-border', title: 'Cross-border money transfers', icon: { name: 'send', type: 'Feather' }, isNew: true },
       { id: 'international', title: 'International payments', icon: { name: 'dollar-sign', type: 'Feather' } },
@@ -45,7 +46,7 @@ export default function PaymentsScreen() {
             {group.items.map((item, idx) => {
               const isLast = idx === group.items.length - 1;
               return (
-                <TouchableOpacity onPress={() => router.push('/pay-beneficiary')} key={item.id} style={[styles.row, !isLast && styles.rowDivider]} activeOpacity={0.7}>
+                <TouchableOpacity onPress={() => item?.onPress ? item.onPress() : router.push('/pay-beneficiary')} key={item.id} style={[styles.row, !isLast && styles.rowDivider]} activeOpacity={0.7}>
                   <View style={styles.left}>
                     <View style={styles.iconCircle}>
                       <Icon name={item.icon.name} type={item.icon.type} size={22} color={colors.primary} />

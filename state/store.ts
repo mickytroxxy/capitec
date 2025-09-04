@@ -1,23 +1,27 @@
-import { configureStore, combineReducers } from '@reduxjs/toolkit';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { persistReducer, persistStore } from 'redux-persist';
 import ExpoFileSystemStorage from 'redux-persist-expo-filesystem';
-import beneficiaryForm from './slices/beneficiaryFormSlice';
 import accountInfo from './slices/accountInfo';
+import accounts from './slices/accounts';
 import beneficiaries from './slices/beneficiaries';
-import success from './slices/successSlice';
+import beneficiaryForm from './slices/beneficiaryFormSlice';
+import confirmDialog from './slices/confirmDialog';
 import payments from './slices/payments';
+import success from './slices/successSlice';
 const rootReducer = combineReducers({
   beneficiaryForm,
   accountInfo,
   beneficiaries,
   success,
-  payments
+  payments,
+  accounts,
+  confirmDialog,
 });
 
 const persistConfig = {
   key: 'root',
   storage: ExpoFileSystemStorage,
-  whitelist: ['beneficiaryForm', 'accountInfo', 'beneficiaries'],
+  whitelist: ['beneficiaryForm', 'accountInfo', 'beneficiaries', 'accounts'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
