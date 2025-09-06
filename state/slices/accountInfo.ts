@@ -10,6 +10,7 @@ export type AccountType = {
   pin:string;
   active:boolean;
   notificationToken:string;
+  title:'Mr' | 'Miss'
 };
 
 const initialState: {

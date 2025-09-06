@@ -35,6 +35,31 @@ const groups: { id: string; items: TransactItem[] }[] = [
       { id: 'licence-disc', title: 'Renew licence disc', icon: { name: 'car', type: 'FontAwesome' }, isNew: true },
     ],
   },
+  {
+    id: 'group-3',
+    items: [
+      { id: 'transfer-money', title: 'Transfer money', icon: { name: 'compare-arrows', type: 'MaterialIcons' } },
+      { id: 'recurring-future', title: 'Recurring/future-dated', icon: { name: 'calendar', type: 'Feather' } },
+      { id: 'send-cash', title: 'Send cash', icon: { name: 'dollar-sign', type: 'Feather' } },
+    ],
+  },
+  {
+    id: 'group-4',
+    items: [
+      { id: 'scan-to-pay', title: 'Scan to pay', icon: { name: 'qrcode', type: 'AntDesign' } },
+      { id: 'pay-me', title: 'Pay me', icon: { name: 'user', type: 'Feather' } },
+      { id: 'capitec-pay', title: 'Capitec Pay', icon: { name: 'shopping-cart', type: 'Feather' } },
+      { id: 'request-payment', title: 'Request a payment', icon: { name: 'message-circle', type: 'Feather' }, isNew: true },
+    ],
+  },
+  {
+    id: 'group-5',
+    items: [
+      { id: 'debit-orders', title: 'Debit orders', icon: { name: 'calendar', type: 'Feather' } },
+      { id: 'sars-efiling', title: 'SARS eFiling', icon: { name: 'percent', type: 'Feather' } },
+      { id: 'load-account', title: 'Load Account', icon: { name: 'credit-card', type: 'Feather' }, onPress: () => router.push('/load-account') },
+    ],
+  },
 ];
 
 export default function PaymentsScreen() {

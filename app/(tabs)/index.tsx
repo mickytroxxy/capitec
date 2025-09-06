@@ -9,7 +9,7 @@ import { Fonts } from '@/constants/Fonts';
 import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'expo-router';
 import {
-  ChevronRight
+    ChevronRight
 } from 'lucide-react-native';
 
 export const currencyFormatter = (amount: any) => {
@@ -19,6 +19,7 @@ export const currencyFormatter = (amount: any) => {
 export default function HomeScreen() {
   const { accountInfo } = useAuth();
   const router  = useRouter();
+  if (!accountInfo) return null; // gated by /auth-gate now
   return (
     <SafeAreaView style={{flex:1, backgroundColor:'#f5f5f5'}} edges={['left','right']}>
       <ScrollView style={{flex:1,margin:-10}} showsVerticalScrollIndicator={false}>

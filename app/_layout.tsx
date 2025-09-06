@@ -105,9 +105,14 @@ export default function RootLayout() {
               statusBarTranslucent: false,
             }}
           >
+            <Stack.Screen name="auth-gate" options={{ headerShown: false }} />
+            <Stack.Screen name="register" options={{ title: 'Register' }} />
+            <Stack.Screen name="sign-in" options={{ headerShown: false }} />
+            <Stack.Screen name="enter-pin" options={{ title: 'Enter app PIN' }} />
+            <Stack.Screen name="quick-actions" options={{ title: '' }} />
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="+not-found" />
-            <Stack.Screen name="main-account" options={{ 
+            <Stack.Screen name="main-account" options={{
               title: 'Main Account' ,
               headerRight:() => <View style={{flexDirection:'row',alignItems:'center'}}>
                 <Icon name="search" type="Feather" size={24} color={colors.white} />

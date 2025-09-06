@@ -42,7 +42,7 @@ export default function PaymentFormScreen() {
   const [modal, setModal] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentType, setPaymentType] = useState<'normal' | 'immediate'>('normal');
-  
+  const isCapitec = bankName.toLowerCase().includes('capitec');
   const validateAmount = (value: string) => {
     if (!value.trim()) {
       return 'Amount is required';
@@ -156,11 +156,12 @@ export default function PaymentFormScreen() {
   }, [amount, amountError, referenceError, statementError, reference, statement, totalAmount, accountInfo?.balance]);
 
   const onConfirm = async () => {
+    const isCapitec = bankName.toLowerCase().includes('capitec');
     if (isProcessing) return;
 
     try {
       setIsProcessing(true);
-      if(paymentType === 'immediate'){
+      if(paymentType === 'immediate' || isCapitec){
         router.push('/error');
         return;
       }
@@ -406,16 +407,18 @@ export default function PaymentFormScreen() {
                   }
                 }}
               />
-              <LinearButton
-                variant='secondary'
-                title={`Immediate Payment`}
-                onPress={() => {
-                  if (canPay) {
-                    setPaymentType('immediate');
-                    setModal(true);
-                  }
-                }}
-              />
+              {!isCapitec &&
+                <LinearButton
+                  variant='secondary'
+                  title={`Immediate Payment`}
+                  onPress={() => {
+                    if (canPay) {
+                      setPaymentType('immediate');
+                      setModal(true);
+                    }
+                  }}
+                />
+              }
             </View>
           </>
         ) : (
