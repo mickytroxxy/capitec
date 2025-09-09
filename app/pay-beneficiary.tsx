@@ -12,6 +12,7 @@ import { Fonts } from '@/constants/Fonts';
 import { getBeneficiaries } from '@/firebase';
 import { useAuth } from '@/hooks/useAuth';
 import { setBeneficiaries } from '@/state/slices/beneficiaries';
+import { setLoadingState } from '@/state/slices/loader';
 import { RootState } from '@/state/store';
 import { useIsFocused } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
@@ -22,7 +23,10 @@ export default function PayBeneficiaryScreen() {
   const [sortBy, setSortBy] = useState<'recent' | 'az' | 'za'>('recent');
   const [filterBy, setFilterBy] = useState<'6m' | '12m' | 'never' | 'all'>('all');
   const [tab, setTab] = useState<'frequent' | 'one'>('frequent');
-  const {beneficiaries} = useSelector((s: RootState) => s.beneficiaries);
+  const beneficiaries = useSelector((s: RootState) => {
+    // Ensure we always return an array, even if beneficiaries is undefined
+    return Array.isArray(s.beneficiaries?.beneficiaries) ? s.beneficiaries.beneficiaries : [];
+  });
   const {accountInfo} = useAuth();
   const isFocused = useIsFocused();
   const sortOptions: DropdownOption[] = [
@@ -114,8 +118,8 @@ export default function PayBeneficiaryScreen() {
 
   useEffect(() => {
     (async() => {
+      dispatch(setLoadingState({isloading:true,type:'spinner'}))
       const response = await getBeneficiaries(accountInfo?.id as any || '');
-      console.log(response, accountInfo?.id)
       if(response?.length > 0){
         // Transform the data to include required properties for the UI
         const transformedBeneficiaries = response.map((beneficiary, index) => {
@@ -163,6 +167,7 @@ export default function PayBeneficiaryScreen() {
         dispatch(setBeneficiaries(transformedBeneficiaries));
         
       }
+      dispatch(setLoadingState({isloading:false,type:'spinner'}))
     })()
   },[isFocused])
   return (

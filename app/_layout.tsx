@@ -1,4 +1,5 @@
 import Icon from '@/components/ui/Icon';
+import { Loader } from '@/components/ui/Loader';
 import { colors } from '@/constants/Colors';
 import { Fonts } from '@/constants/Fonts';
 import { useFonts } from '@/hooks/useFonts';
@@ -120,6 +121,7 @@ export default function RootLayout() {
               </View>,
             }} />
           </Stack>
+          <Loader/>
         </SafeAreaProvider>
       </PersistGate>
     </Provider>

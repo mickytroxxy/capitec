@@ -6,6 +6,7 @@ import accounts from './slices/accounts';
 import beneficiaries from './slices/beneficiaries';
 import beneficiaryForm from './slices/beneficiaryFormSlice';
 import confirmDialog from './slices/confirmDialog';
+import loader from './slices/loader';
 import payments from './slices/payments';
 import success from './slices/successSlice';
 const rootReducer = combineReducers({
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
   payments,
   accounts,
   confirmDialog,
+  loader
 });
 
 const persistConfig = {

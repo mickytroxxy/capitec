@@ -6,9 +6,10 @@ import { Fonts } from '@/constants/Fonts';
 import { loginApi, loginApiByPhone } from '@/firebase';
 import { phoneNoValidation } from '@/hooks/useProof';
 import { setAccountInfo } from '@/state/slices/accountInfo';
+import { setLoadingState } from '@/state/slices/loader';
 import { RootState } from '@/state/store';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
@@ -22,6 +23,7 @@ export default function EnterPinScreen() {
   const { accountInfo } = useSelector((s: RootState) => s.accountInfo);
 
   const submit = async () => {
+    dispatch(setLoadingState({isloading:true,type:'lock'}))
     if(params?.action === 'old'){
       const accountNumber = accountInfo?.accountNumber || '';
       const users = await loginApi(accountNumber, pin);
@@ -38,8 +40,12 @@ export default function EnterPinScreen() {
         router.replace('/(tabs)');
       }
     }
+    dispatch(setLoadingState({isloading:false,type:'lock'}))
   };
 
+  useEffect(() => {
+    
+  },[])
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f7f9fcff'}}>
       <Stack.Screen options={{ 

@@ -4,8 +4,10 @@ import { colors } from '@/constants/Colors';
 import { Fonts } from '@/constants/Fonts';
 import { loginApi } from '@/firebase';
 import { useAuth } from '@/hooks/useAuth';
+import { setLoadingState } from '@/state/slices/loader';
 import React, { useState } from 'react';
 import { Modal, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 export type ConfirmAddBeneficiaryModalProps = {
   visible: boolean;
@@ -20,13 +22,16 @@ export default function ConfirmAddBeneficiaryModal({ visible, onClose, onConfirm
   const [pin, setPin] = React.useState('');
   React.useEffect(() => { if (!visible) setPin(''); }, [visible]);
   const [errorText,setErrorText] = useState('');
+  const dispatch = useDispatch()
   const {accountInfo} = useAuth();
   const handlePin = async() => {
+    dispatch(setLoadingState({isloading:true,type:'spinner'}))
     const pinResponse = await loginApi(accountInfo?.accountNumber || '', pin);
     if(pinResponse?.length > 0){
       onConfirm(pin);
     }else{
       setErrorText('Invalid Remote PIN');
+      dispatch(setLoadingState({isloading:false,type:'spinner'}))
     }
   }
   return (

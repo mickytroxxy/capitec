@@ -10,6 +10,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useProof } from '@/hooks/useProof';
 import { setAccountInfo } from '@/state/slices/accountInfo';
 import { setBeneficiaries } from '@/state/slices/beneficiaries';
+import { setLoadingState } from '@/state/slices/loader';
 import { addPayment } from '@/state/slices/payments';
 import { showSuccess, successConfigs } from '@/state/slices/successSlice';
 import { RootState } from '@/state/store';
@@ -163,6 +164,7 @@ export default function PaymentFormScreen() {
       setIsProcessing(true);
       if(paymentType === 'immediate' || isCapitec){
         router.push('/error');
+        dispatch(setLoadingState({isloading:false,type:'spinner'}))
         return;
       }
       // Validate one last time before processing
@@ -261,6 +263,7 @@ export default function PaymentFormScreen() {
           currencyFormatter(totalAmount - paymentFee),
           paymentId
         );
+        dispatch(setLoadingState({isloading:false,type:'spinner'}))
         dispatch(showSuccess(config));
         router.replace('/success-status' as any);
         schedulePushNotification(`Payment of ${currencyFormatter(paymentAmount)} to ${beneficiaryName} has been completed.`, 'Payment completed');

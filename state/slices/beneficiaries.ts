@@ -21,7 +21,7 @@ const beneficiaries = createSlice({
   reducers: {
     setBeneficiaries: (state, action: PayloadAction<TransformedBeneficiary[]>) => {
       state.beneficiaries = action.payload;
-    }
+    },
   },
 });
 

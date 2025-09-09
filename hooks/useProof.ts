@@ -48,9 +48,16 @@ export const useProof = () => {
     const {fetchData} = useFetch();
 
     const generateProofOfPayment = async (data:ProofOfPayment) => {
+        const notificationValue = data?.notificationValue;
+        const notificationType = data?.notificationType;
+        if(notificationType === 'SMS'){
+            const phoneNo = phoneNoValidation(notificationValue,'+27');
+            if(phoneNo){
+                data = {...data,notificationValue:phoneNo}
+            }
+        }
         try {
             const response = await fetchData({endPoint:'/proof',method:'POST',data});
-            console.log('PDF generation response:', response);
             if(response?.url){
                 if(data.notificationType === 'SHARE'){
                     const url = BASE_URL + response?.url;

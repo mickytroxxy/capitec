@@ -37,7 +37,7 @@ export default function PaymentNotificationScreen() {
   const {accountInfo} = useAuth();
   const [cell, setCell] = useState('');
   const [email, setEmail] = useState('');
-
+  console.log(form,'--->')
   // Initialize from existing beneficiary values
   useEffect(() => {
     if (current) {
@@ -53,7 +53,7 @@ export default function PaymentNotificationScreen() {
     if (selected === 'email') return email.trim().length > 0;
     return true;
   }, [selected, cell, email]);
-  const handleProof = async (action:'SEND' | 'SHARE') => {
+  const handleProof = async (action:'SEND' | 'SHARE', notificationType:string,notificationValue:string) => {
     if(!payment) return;
     try {
       generateProofOfPayment({
@@ -68,8 +68,8 @@ export default function PaymentNotificationScreen() {
         paymentReference: payment.reference,
         senderName: `${accountInfo?.firstName} ${accountInfo?.lastName}`,
         title: 'Mr',
-        notificationType: action === 'SEND' ? form.notificationType?.toUpperCase() as any : 'SHARE',
-        notificationValue: form.notificationValue,
+        notificationType: action === 'SEND' ? notificationType?.toUpperCase() as any : 'SHARE',
+        notificationValue: notificationValue,
       })
     } catch (e) {
       console.error(e);
@@ -173,7 +173,8 @@ export default function PaymentNotificationScreen() {
               <LinearButton
                 title="Send"
                 onPress={async () => {
-                  await handleProof('SEND');
+                  const val = selected === 'sms' ? cell : selected === 'email' ? email : '';
+                  await handleProof('SEND',selected,val);
                   // Show success status saying notification sent, with OK button to go back
                   dispatch(showSuccess({
                     title: 'Successful',
@@ -194,7 +195,8 @@ export default function PaymentNotificationScreen() {
                 title="Share payment notification"
                 variant="secondary"
                 onPress={async () => {
-                  handleProof('SHARE');
+                  const val = selected === 'sms' ? cell : selected === 'email' ? email : '';
+                  await handleProof('SHARE',selected,val);
                 }}
               />
             </View>

@@ -8,6 +8,7 @@ import { createData } from '@/firebase';
 import { useAuth } from '@/hooks/useAuth';
 import { setBeneficiaries } from '@/state/slices/beneficiaries';
 import { setField } from '@/state/slices/beneficiaryFormSlice';
+import { setLoadingState } from '@/state/slices/loader';
 import { RootState } from '@/state/store';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
@@ -44,18 +45,7 @@ export default function AddAccountScreen() {
   const onConfirm = async (pin: string) => {
     try {
       setSubmitting(true);
-      const res = await createData('beneficiaries', form.account, {
-        name: form.name,
-        account: form.account,
-        bank: form.bank,
-        branch: form.branch,
-        reference: form.reference,
-        oneTime: form.oneTime,
-        notificationType: form.notificationType,
-        notificationValue: form.notificationValue,
-        lastPaid: null,
-        userId: accountInfo?.id || 1,
-      });
+      
       const newBeneficiary = {
         id: Date.now(),
         name: form.name,
@@ -66,17 +56,18 @@ export default function AddAccountScreen() {
         oneTime: form.oneTime,
         notificationType: form.notificationType,
         notificationValue: form.notificationValue,
-        userId: accountInfo?.id,
-        // Fields expected by TransformedBeneficiary
+        userId: parseFloat(accountInfo?.id as any) || 1,
         avatar: '',
         accountNumber: form.account,
         lastPaid: '',
       } as any;
+      const res = await createData('beneficiaries', form.account, newBeneficiary);
       dispatch(setBeneficiaries([newBeneficiary, ...beneficiaries] as any));
       setSubmitting(false);
       setModal(false);
+      dispatch(setLoadingState({isloading:false,type:'spinner'}))
       if (res) {
-        router.replace({ pathname: '/beneficiary-added', params: { account: form.account, name: form.name } as any });
+        router.push({ pathname: '/beneficiary-added', params: { account: form.account, name: form.name } as any });
       }
     } catch (e) {
       setSubmitting(false);
@@ -84,6 +75,16 @@ export default function AddAccountScreen() {
     }
   };
 
+  useEffect(() => {
+    dispatch(setField({ key: 'name', value: '' }));
+    dispatch(setField({ key: 'account', value: '' }));
+    dispatch(setField({ key: 'bank', value: '' }));
+    dispatch(setField({ key: 'branch', value: '' }));
+    dispatch(setField({ key: 'reference', value: '' }));
+    dispatch(setField({ key: 'oneTime', value: false }));
+    dispatch(setField({ key: 'notificationType', value: 'none' }));
+    dispatch(setField({ key: 'notificationValue', value: '' }));
+  }, [dispatch])
   return (
     <SafeAreaView style={styles.container} edges={['left','right']}>
       <Stack.Screen options={{ title: 'Add Beneficiary' }} />
@@ -100,7 +101,7 @@ export default function AddAccountScreen() {
           </View>
 
           <View style={styles.card}>
-            <TextField label="Account number" value={form.account} onChangeText={(v) => dispatch(setField({ key: 'account', value: v }))} keyboardType="number-pad" />
+            <TextField maxLength={10} label="Account number" value={form.account} onChangeText={(v) => dispatch(setField({ key: 'account', value: v }))} keyboardType="number-pad" />
             <View style={{height:0.7,backgroundColor:colors.borderColor}}/>
             <TextField label="Choose bank" isDropdown value={form.bank} onChangeText={() => {}} editable={false} rightChevron onPressRight={() => router.push('/choose-bank')} />
           </View>
