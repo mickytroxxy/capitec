@@ -33,6 +33,18 @@ export const loginApi = async (accountNumber: string, pin: string): Promise<any[
     return [];
   }
 };
+export const loginApiByPhone = async (phoneNumber: string, pin: string): Promise<any[]> => {
+  try {
+    const querySnapshot = await getDocs(query(collection(db, "users"), where("phone", "==", phoneNumber), where("pin", "==", pin), where("active", "==", true)));
+    // Ensure the Firestore document ID is preserved on the returned object.
+    // If the document also contains an `id` field, spreading the data first prevents it from overwriting the doc ID.
+    const data = querySnapshot.docs.map((d) => ({ ...d.data(), id: d.id }));
+    return data;
+  } catch (e) {
+    console.error(e);
+    return [];
+  }
+};
 
 export const createData = async (tableName: string, docId: string, data: any): Promise<boolean> => {
   try {

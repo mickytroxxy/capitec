@@ -35,14 +35,14 @@ export default function MainAccountScreen() {
 
   const groups = useMemo(() => {
     const byMonth: Record<string, any[]> = {};
-    const sorted = [...filtered].sort((a, b) => b.transactionDate - a.transactionDate);
+    const sorted = [...filtered].sort((a, b) => new Date(b.transactionDate).getTime() - new Date(a.transactionDate).getTime());
     for (const p of sorted) {
       const d = new Date(p.transactionDate);
       const key = d.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
       if (!byMonth[key]) byMonth[key] = [];
       byMonth[key].push(p);
     }
-    return Object.entries(byMonth).map(([label, items]) => ({ label, items }));
+    return Object.entries(byMonth).map(([label, items]) => ({ label, items })).sort((a, b) => new Date(b.label + ' 1').getTime() - new Date(a.label + ' 1').getTime());
   }, [filtered]);
 
   const currency = (a: any) => {
@@ -99,7 +99,7 @@ export default function MainAccountScreen() {
               <View style={styles.listCard}>
                 {g.items.map((p: any, idx: number) => {
                   const isLast = idx === g.items.length - 1;
-                  const isCredit = p.beneficiaryAccount === accountInfo?.accountNumber;
+                  const isCredit = p.beneficiaryAccount === accountInfo?.accountNumber && !p.statementDescription?.toLowerCase().includes('fee');
                   return (
                     <TouchableOpacity key={p.id || idx} activeOpacity={0.7} style={[styles.itemRow, !isLast && styles.itemDivider]} onPress={() => router.push({ pathname: '/payment-details', params: { paymentId: p.id } })}>
                       <View style={{ flex: 1 }}>

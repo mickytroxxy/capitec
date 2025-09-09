@@ -9,7 +9,7 @@ import { RootState } from '@/state/store';
 import { router, Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StatusBar as Stat, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -80,6 +80,7 @@ export default function SuccessStatusScreen() {
     <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
       <Stack.Screen options={{ headerShown: false }} />
       <StatusBar style="light" backgroundColor={colors.tertiary} />
+      <Stat backgroundColor={colors.tertiary} />
       {/* Success banner */}
       <View style={styles.successHeader}>
         <Text style={styles.successTitle}>{title}</Text>

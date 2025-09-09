@@ -3,27 +3,40 @@ import LinearButton from '@/components/ui/LinearButton';
 import YesNoSwitch from '@/components/ui/YesNoSwitch';
 import { colors } from '@/constants/Colors';
 import { Fonts } from '@/constants/Fonts';
-import { loginApi } from '@/firebase';
-import { setActiveUser } from '@/state/slices/accountInfo';
+import { loginApi, loginApiByPhone } from '@/firebase';
+import { phoneNoValidation } from '@/hooks/useProof';
+import { setAccountInfo } from '@/state/slices/accountInfo';
 import { RootState } from '@/state/store';
-import { Stack, router } from 'expo-router';
+import { Stack, router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 
 export default function EnterPinScreen() {
+  const params = useLocalSearchParams<{ action?: 'old' | 'fresh'}>();
   const [pin, setPin] = useState('');
+  const [phoneNumber,setPhoneNumber] = useState('')
   const [biometrics, setBiometrics] = useState(false);
   const dispatch = useDispatch();
   const { accountInfo } = useSelector((s: RootState) => s.accountInfo);
 
   const submit = async () => {
-    const accountNumber = accountInfo?.accountNumber || '';
-    const users = await loginApi(accountNumber, pin);
-    if (users.length > 0) {
-      dispatch(setActiveUser(users[0] as any));
-      router.replace('/(tabs)');
+    if(params?.action === 'old'){
+      const accountNumber = accountInfo?.accountNumber || '';
+      const users = await loginApi(accountNumber, pin);
+      if (users.length > 0) {
+        dispatch(setAccountInfo(users[0] as any));
+        router.replace('/(tabs)');
+      }
+    }else{
+      const phoneNo = phoneNoValidation(phoneNumber,'+27');
+      console.log(phoneNo)
+      const users = await loginApiByPhone(phoneNo as any, pin);
+      if (users.length > 0) {
+        dispatch(setAccountInfo(users[0] as any));
+        router.replace('/(tabs)');
+      }
     }
   };
 
@@ -43,7 +56,31 @@ export default function EnterPinScreen() {
           <View style={{flex:1}}><Text style={styles.label}>Enter app PIN</Text></View>
           <View><Text style={[styles.label,{color:colors.primary}]}>Forgot PIN</Text></View>
         </View>
-        
+        {params?.action === 'fresh' &&
+          <View style={{marginTop:10}}>
+            <TextInput
+              style={{
+                borderWidth: 1,
+                borderColor: '#b9b7b7ff',
+                borderRadius: 3,
+                padding: 12,
+                paddingVertical:15,
+                fontSize: 14,
+                color: '#111',
+                fontFamily: Fonts.fontMedium,
+                marginBottom: 10,
+                backgroundColor:'#fff'
+              }}
+              value={phoneNumber}
+              onChangeText={setPhoneNumber}
+              placeholder="Enter Phone Number"
+              placeholderTextColor={colors.gray}
+              secureTextEntry
+              keyboardType="phone-pad"
+              maxLength={10}
+            />
+          </View>
+        }
         <View style={{marginTop:10}}>
           <TextInput
             style={{

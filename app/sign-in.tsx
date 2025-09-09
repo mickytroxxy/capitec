@@ -55,7 +55,7 @@ export default function SignInScreen() {
           </TouchableOpacity>
         </View>
         <View style={{ width: '100%', paddingHorizontal: 16, marginTop: 10 }}>
-          <LinearButton title="Sign In" onPress={() => router.push('/enter-pin')} />
+          <LinearButton title="Sign In" onPress={() => router.push({pathname:'/enter-pin',params:{action:'old'}})} />
         </View>
       </ScrollView>
     </SafeAreaView>

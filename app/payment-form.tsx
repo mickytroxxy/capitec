@@ -263,7 +263,7 @@ export default function PaymentFormScreen() {
         );
         dispatch(showSuccess(config));
         router.replace('/success-status' as any);
-        schedulePushNotification(`Payment of ${currencyFormatter(totalAmount)} to ${beneficiaryName} has been completed.`, 'Payment completed');
+        schedulePushNotification(`Payment of ${currencyFormatter(paymentAmount)} to ${beneficiaryName} has been completed.`, 'Payment completed');
         if(form?.notificationType !== 'none'){
           generateProofOfPayment({
             isImmediate: false,//paymentType === 'immediate',

@@ -97,7 +97,7 @@ export const successConfigs = {
 
     return {
       message: `You have paid ${amount} to ${beneficiaryName}.`,
-      subMessage: `Effective date: ${effectiveDate}`,
+      subMessage: `Effective date: Today`,
       paymentData: paymentData,
       buttons: [
         {

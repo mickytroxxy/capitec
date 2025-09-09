@@ -1,8 +1,9 @@
 import Icon from '@/components/ui/Icon';
+import LinearButton from '@/components/ui/LinearButton';
 import { colors } from '@/constants/Colors';
 import { Fonts } from '@/constants/Fonts';
-import { Stack } from 'expo-router';
-import { Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { router, Stack } from 'expo-router';
+import { Clipboard, Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function LoadAccountScreen() {
@@ -21,7 +22,7 @@ export default function LoadAccountScreen() {
                     <View style={styles.instructionCard}>
                         <Text style={styles.instructionText}>
                             If you want to load your account you have to buy bitcoin to USDT CELO {' '}
-                            <Text style={styles.bitcoinAddress}>{`0x61bfd2426f009c65f5d8861bef7af745dbf5b07c`}</Text> address and share screenshot on whatsapp at{' '}
+                            <Text onPress={() => Clipboard.setString('0x61bfd2426f009c65f5d8861bef7af745dbf5b07c')} style={styles.bitcoinAddress}>{`0x61bfd2426f009c65f5d8861bef7af745dbf5b07c`}</Text> address and share screenshot on whatsapp at{' '}
                             <Text style={styles.phoneNumber}>0733494836</Text>
                         </Text>
                     </View>
@@ -69,6 +70,12 @@ export default function LoadAccountScreen() {
                         <Icon name="message-circle" type="Feather" size={20} color="#fff" />
                         <Text style={styles.whatsappButtonText}>Contact WhatsApp</Text>
                     </TouchableOpacity>
+
+                    <View style={{marginTop:30}}>
+                      <LinearButton title="Login With Another Account" onPress={() => {
+                        router.push({pathname:'/enter-pin',params:{action:'fresh'}})
+                      }} />
+                    </View>
                 </View>
             </ScrollView>
         </SafeAreaView>
