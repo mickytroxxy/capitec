@@ -1,3 +1,4 @@
+import { AccountBalance } from '@/components/payments/AccountBalance';
 import { History } from '@/components/payments/History';
 import ConfirmAddBeneficiaryModal from '@/components/ui/ConfirmAddBeneficiaryModal';
 import Icon from '@/components/ui/Icon';
@@ -16,7 +17,7 @@ import { showSuccess, successConfigs } from '@/state/slices/successSlice';
 import { RootState } from '@/state/store';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
-import { Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { currencyFormatter } from './(tabs)';
@@ -43,6 +44,7 @@ export default function PaymentFormScreen() {
   const [modal, setModal] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentType, setPaymentType] = useState<'normal' | 'immediate'>('normal');
+  const [currentPaymentId, setCurrentPaymentId] = useState<string>('');
   const isCapitec = bankName.toLowerCase().includes('capitec');
   const validateAmount = (value: string) => {
     if (!value.trim()) {
@@ -169,7 +171,7 @@ export default function PaymentFormScreen() {
       }
       // Validate one last time before processing
       const paymentAmount = parseFloat(amount.replace(/\s/g, '').replace(',', '.'));
-      const paymentId = `PAY_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+      const paymentId = currentPaymentId;
 
       // Create payment record
       const paymentData = {
@@ -299,6 +301,10 @@ export default function PaymentFormScreen() {
     const initialReference = `${accountInfo?.firstName?.slice(0,1)} ${accountInfo?.lastName}` || '';
     setReference(initialReference);
 
+    // Generate payment ID
+    const paymentId = `PAY_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+    setCurrentPaymentId(paymentId);
+
     // Validate initial values
     setAmountError(validateAmount(amount));
     setReferenceError(validateReference(initialReference));
@@ -309,7 +315,7 @@ export default function PaymentFormScreen() {
       <Stack.Screen options={{
         headerTitle: 'Pay Beneficiary',
         headerRight: () => (
-          <TouchableOpacity onPress={() => router.push({ pathname: '/payment-notification', params: { account: form?.account } as any })} activeOpacity={0.8} style={{ left: 10 }}>
+          <TouchableOpacity onPress={() => router.push({ pathname: '/payment-notification', params: { account: form?.account, paymentId: currentPaymentId } as any })} activeOpacity={0.8} style={{ left: 10 }}>
             <Icon name="more-vertical" type="Feather" size={24} color={colors.white} />
           </TouchableOpacity>
         )
@@ -335,24 +341,7 @@ export default function PaymentFormScreen() {
         {activeTab === 'payment' ? (
           <>
             {/* From section */}
-            <Text style={styles.sectionTitle}>From</Text>
-            <View style={styles.card}>
-              <View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:16,paddingVertical:14}}>
-                <View style={styles.fromLeft}>
-                  <View style={styles.fromIconBox}>
-                    <Image source={require('../assets/images/transact.png')} style={{ width: 36, height: 36, tintColor: colors.primary }} resizeMode="contain" />
-                  </View>
-                  <View style={{  }}>
-                    <Text style={styles.fromTitle}>Main Account</Text>
-                    <Text style={styles.fromSubtitle}>Available balance</Text>
-                  </View>
-                </View>
-                <View style={styles.fromRight}>
-                  <Text style={styles.balance}>{currencyFormatter(accountInfo?.balance || 0)}</Text>
-                  <Icon name="more-vertical" type="Feather" size={20} color={colors.primary} />
-                </View>
-              </View>
-            </View>
+            <AccountBalance/>
 
             <View style={[styles.card,{marginTop:12}]}>
               <View>
@@ -390,7 +379,7 @@ export default function PaymentFormScreen() {
                 onChangeText={() => {}}
                 editable={false}
                 rightChevron
-                onPressRight={() => router.push({ pathname: '/payment-notification', params: { account: form?.account } as any })}
+                onPressRight={() => router.push({ pathname: '/payment-notification', params: { account: form?.account, paymentId: currentPaymentId } as any })}
               />
             </View>
 
@@ -524,4 +513,3 @@ const styles = StyleSheet.create({
     color: colors.primary,
   },
 });
-

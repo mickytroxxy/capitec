@@ -40,7 +40,7 @@ const groups: { id: string; items: TransactItem[] }[] = [
     items: [
       { id: 'transfer-money', title: 'Transfer money', icon: { name: 'compare-arrows', type: 'MaterialIcons' } },
       { id: 'recurring-future', title: 'Recurring/future-dated', icon: { name: 'calendar', type: 'Feather' } },
-      { id: 'send-cash', title: 'Send cash', icon: { name: 'dollar-sign', type: 'Feather' } },
+      { id: 'send-cash', title: 'Send cash', icon: { name: 'dollar-sign', type: 'Feather' }, onPress:() => router.push('/cash-send') },
     ],
   },
   {

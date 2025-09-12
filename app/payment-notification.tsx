@@ -1,4 +1,5 @@
 import { updateBeneficiaryNotification } from '@/api';
+import { currencyFormatter } from '@/app/(tabs)';
 import Icon from '@/components/ui/Icon';
 import LinearButton from '@/components/ui/LinearButton';
 import TextField from '@/components/ui/TextField';
@@ -31,13 +32,12 @@ export default function PaymentNotificationScreen() {
   const current = beneficiaries.find(b => b.account === params?.account);
   const { payments } = useSelector((s: RootState) => s.payments);
   const form = useSelector((s: RootState) => s.beneficiaryForm);
-  const {generateProofOfPayment} = useProof();
+  const {generateProofOfPayment, shareTextMessage} = useProof();
   const payment = useMemo(() => payments.find(p => p.id === params?.paymentId), [payments, params?.paymentId]);
   const [selected, setSelected] = useState<OptionKey>('none');
   const {accountInfo} = useAuth();
   const [cell, setCell] = useState('');
   const [email, setEmail] = useState('');
-  console.log(form,'--->')
   // Initialize from existing beneficiary values
   useEffect(() => {
     if (current) {
@@ -195,8 +195,25 @@ export default function PaymentNotificationScreen() {
                 title="Share payment notification"
                 variant="secondary"
                 onPress={async () => {
-                  const val = selected === 'sms' ? cell : selected === 'email' ? email : '';
-                  await handleProof('SHARE',selected,val);
+                  const expiryDate = new Date();
+                  expiryDate.setDate(expiryDate.getDate() + 30);
+                  const formattedExpiryDate = expiryDate.toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric'
+                  });
+
+                  const message = `Capitec: Send Cash
+Amount: ${currencyFormatter(payment?.amount || 0)}
+Reference number: ${payment?.reference || 'N/A'}
+Expiry date: ${formattedExpiryDate}
+
+New. You can now collect your cash at ACKERMANS, PEP, PEP HOME, PEP CELL. Remember to carry your South African ID along with you.
+You can also collect your cash at Pick n Pay, Boxer, Checkers, USave, Shoprite or use our Cardless Services at Capitec ATMs.
+
+For enquiries, call 0860102043`;
+
+                  shareTextMessage(message);
                 }}
               />
             </View>

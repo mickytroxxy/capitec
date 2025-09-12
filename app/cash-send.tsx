@@ -1,85 +1,208 @@
-import Icon from '@/components/ui/Icon';
+import { AccountBalance } from '@/components/payments/AccountBalance';
+import ConfirmAddBeneficiaryModal from '@/components/ui/ConfirmAddBeneficiaryModal';
+import LinearButton from '@/components/ui/LinearButton';
+import TextField from '@/components/ui/TextField';
 import { colors } from '@/constants/Colors';
 import { Fonts } from '@/constants/Fonts';
-import { ChevronRight } from 'lucide-react-native';
+import { createData, updateTable } from '@/firebase';
+import { useAuth } from '@/hooks/useAuth';
+import { setLoadingState } from '@/state/slices/loader';
+import { showSuccess } from '@/state/slices/successSlice';
+import { Stack, router } from 'expo-router';
 import { useState } from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useDispatch } from 'react-redux';
+import { currencyFormatter } from './(tabs)';
+import { schedulePushNotification } from './_layout';
 
 export default function CashSend() {
-  const [tab, setTab] = useState<'global' | 'connect' | 'live'>('global');
+  const [amount, setAmount] = useState('');
+  const [secretCode, setSecretCode] = useState('');
+  const [amountError, setAmountError] = useState('');
+  const [modal,setModal] = useState(false);
+  const dispatch = useDispatch();
+  const validateAmount = (value: string) => {
+    if (!value.trim()) return '';
+    
+    const numericValue = parseFloat(value.replace(/\s/g, '').replace(',', '.'));
+    
+    if (isNaN(numericValue)) {
+      return 'Please enter a valid amount';
+    }
+    
+    if (numericValue < 40) {
+      return 'Amount must be at least R40';
+    }
+    
+    if (numericValue > 3000) {
+      return 'Amount cannot exceed R3,000';
+    }
+    
+    return '';
+  };
 
-  const Tile = ({ icon, title, subtitle, right }: { icon: any; title: string; subtitle: string; right?: any }) => (
-    <TouchableOpacity style={styles.tile} activeOpacity={0.8}>
-      <View style={styles.tileLeft}>
-        <View style={styles.tileIcon}>{icon}</View>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.tileTitle}>{title}</Text>
-          <Text style={styles.tileSubtitle}>{subtitle}</Text>
-        </View>
-      </View>
-      {right || <ChevronRight size={18} color="#666" />}
-    </TouchableOpacity>
-  );
+  const handleAmountChange = (value: string) => {
+    const formattedValue = value.replace(/[^0-9.]/g, '');
+    setAmount(formattedValue);
+    const error = validateAmount(formattedValue);
+    setAmountError(error);
+  };
 
+  const canSend = amount && secretCode && !amountError && secretCode.length === 4;
+  const { accountInfo } = useAuth();
+  const handleSendCash = async () => {
+    if (!canSend) return;
+    setModal(false);
+    dispatch(setLoadingState({isloading:true,type:'spinner'}));
+    
+    try {
+      const cNumber = `C${Math.floor(Math.random() * 9000000000) + 1000000000}`;
+      const cashSendData = {
+        id: cNumber,
+        amount: parseFloat(amount),
+        secretCode,
+        status: 'pending',
+        createdAt: Date.now(),
+        expiresAt: Date.now() + (30 * 24 * 60 * 60 * 1000), // 30 days from now
+        senderAccount: accountInfo?.accountNumber,
+        senderName: `${accountInfo?.firstName} ${accountInfo?.lastName}`,
+      };
+
+      const success = await createData('cashsends', cNumber, cashSendData);
+
+      if (success) {
+        // Update account balance
+        const newBalance = (accountInfo?.balance || 0) - parseFloat(amount);
+        await updateTable('users', accountInfo?.id as any || '', { balance: newBalance });
+        
+        dispatch(showSuccess({
+          title: 'Successful',
+          message: `Reference number`,
+          cash1: `Send the secret code in a separate message`,
+          cash2: 'Cash not collected within 30 days will be paid back into your account',
+          sub1:cNumber,
+          buttons: [
+            {
+              id: 'share',
+              title: 'Share Reference Number',
+              variant: 'primary',
+              action: { type: 'custom', payload: 'share-reference', amount:amount } as any
+            },
+            {
+              id: 'done',
+              title: 'Done',
+              variant: 'secondary',
+              action: { type: 'replace', payload: '/(tabs)' }
+            }
+          ]
+        }));
+
+        await schedulePushNotification(
+          `Cash send of ${currencyFormatter(parseFloat(amount))} has been created successfully.`,
+          'Cash Send Created'
+        );
+        
+        router.push('/success-status');
+      } else {
+        Alert.alert('Error', 'Failed to create cash send. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error sending cash:', error);
+      Alert.alert('Error', 'Something went wrong. Please try again.');
+    } finally {
+      dispatch(setLoadingState({isloading:false,type:'spinner'}));
+    }
+  }
   return (
     <SafeAreaView style={styles.container}>
-      {/* Tabs */}
-      <View style={styles.tabsBar}>
-        <TouchableOpacity style={[styles.tab, tab === 'global' && styles.tabActive]} onPress={() => setTab('global')}>
-          <Text style={[styles.tabText, tab === 'global' && styles.tabTextActive]}>GlobalOne</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.tab, tab === 'connect' && styles.tabActive]} onPress={() => setTab('connect')}>
-          <Text style={[styles.tabText, tab === 'connect' && styles.tabTextActive]}>Capitec Connect <Text style={styles.badge}>New</Text></Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.tab, tab === 'live' && styles.tabActive]} onPress={() => setTab('live')}>
-          <Text style={[styles.tabText, tab === 'live' && styles.tabTextActive]}>Live Better</Text>
-        </TouchableOpacity>
-      </View>
-
+      <Stack.Screen options={{
+        headerTitle: 'Send Cash'
+      }} />
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 24 }}>
-        {tab === 'global' && (
-          <View style={{ paddingHorizontal: 12, paddingTop: 12 }}>
-            <Tile icon={<Icon name="trending-up" type="Feather" size={18} color="#fff" />} title="Main Account" subtitle="Day-to-day transactional account" />
-            <Tile icon={<Icon name="bar-chart-2" type="Feather" size={18} color="#fff" />} title="Save" subtitle="Access, Notice, Fixed and Tax-free" right={<Text style={styles.newPill}>New</Text>} />
-            <Tile icon={<Icon name="credit-card" type="Feather" size={18} color="#fff" />} title="Credit" subtitle="Credit Card, Facility & Loan" />
-            <Tile icon={<Icon name="shield" type="Feather" size={18} color="#fff" />} title="Insure" subtitle="Cover for you and your family" />
+        <View style={styles.content}>
+          {/* Account Balance Component */}
+          <AccountBalance />
+          
+          <View style={styles.spacer} />
 
-            <Text style={styles.sectionHeader}>For your business</Text>
-            <Tile icon={<Icon name="smartphone" type="Feather" size={18} color="#fff" />} title="Card Machines" subtitle="Lower fees, faster payments" right={<Text style={styles.newPill}>New</Text>} />
-          </View>
-        )}
+            {/* Amount Input */}
+            <View style={styles.card}>
+              <TextField
+                label="Amount (R40 - R3 000)"
+                value={amount}
+                onChangeText={handleAmountChange}
+                keyboardType="numeric"
+                error={amountError}
+              />
 
-        {tab === 'connect' && (
-          <View style={{ paddingHorizontal: 12, paddingTop: 12 }}>
-            <Tile icon={<Icon name="phone" type="Feather" size={18} color="#fff" />} title="Buy Airtime" subtitle="Best value with Capitec Connect" />
-            <Tile icon={<Icon name="wifi" type="Feather" size={18} color="#fff" />} title="Buy Data" subtitle="Affordable data bundles" />
-          </View>
-        )}
+            <View style={{borderBottomWidth:0.7,borderBottomColor:colors.borderColor,marginHorizontal:16}} />
 
-        {tab === 'live' && (
-          <View style={{ paddingHorizontal: 12, paddingTop: 12 }}>
-            <Tile icon={<Icon name="gift" type="Feather" size={18} color="#fff" />} title="Live Better" subtitle="Get cash back and discounts" />
+            {/* Secret Code Input */}
+            <TextField
+              label="Create 4-digit secret code"
+              value={secretCode}
+              onChangeText={(text) => setSecretCode(text.replace(/[^0-9]/g, '').slice(0, 4))}
+              keyboardType="numeric"
+              maxLength={4}
+            />
           </View>
-        )}
+
+          <Text style={styles.infoText}>
+            You need to send this secret code to the recipient in a separate message in order for them to collect the cash.
+          </Text>
+
+          <View style={styles.buttonContainer}>
+            <LinearButton
+              title="Send"
+              onPress={() => setModal(true)}
+            />
+            <View style={styles.spacer} />
+            <LinearButton
+              title="View History"
+              onPress={() => {}}
+              variant="secondary"
+            />
+          </View>
+        </View>
       </ScrollView>
+      <ConfirmAddBeneficiaryModal
+        visible={modal}
+        onClose={() => setModal(false)}
+        onConfirm={handleSendCash}
+        title={`You are about to make send cash of ${currencyFormatter(amount)}`}
+      />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.faintGray },
-  tabsBar: { backgroundColor: colors.secondary, flexDirection: 'row' },
-  tab: { flex: 1, alignItems: 'center', paddingVertical: 14, borderBottomWidth: 3, borderBottomColor: 'transparent' },
-  tabActive: { borderBottomColor: '#fff' },
-  tabText: { color: '#e0f1ff', fontFamily: Fonts.fontLight },
-  tabTextActive: { color: '#fff', fontFamily: Fonts.fontBold },
-  badge: { fontFamily: Fonts.fontBold },
-
-  tile: { backgroundColor: '#fff', padding: 16, borderRadius: 8, marginBottom: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  tileLeft: { flexDirection: 'row', alignItems: 'center', gap: 12, flex: 1 },
-  tileIcon: { width: 36, height: 36, borderRadius: 18, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
-  tileTitle: { fontFamily: Fonts.fontBold, color: '#111' },
-  tileSubtitle: { fontFamily: Fonts.fontLight, color: '#666', marginTop: 4 },
-  sectionHeader: { fontFamily: Fonts.fontBold, color: '#666', paddingHorizontal: 4, marginTop: 12, marginBottom: 8 },
-  newPill: { color: '#fff', backgroundColor: '#b5101b', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 12, overflow: 'hidden', fontFamily: Fonts.fontBold, fontSize: 12 },
+  container: { 
+    flex: 1, 
+  },
+  content: {
+    flex: 1,
+  },
+  spacer: {
+    height: 16,
+  },
+  infoText: {
+    marginTop: 12,
+    color: colors.black,
+    fontFamily: Fonts.fontRegular,
+    fontSize: 14,
+    textAlign: 'center',
+    paddingHorizontal: 20,
+  },
+  buttonContainer: {
+    margin: 16,
+  },
+  card:{
+    backgroundColor:colors.white,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 1.5,
+    overflow: 'hidden',
+  }
 });

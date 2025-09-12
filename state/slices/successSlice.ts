@@ -14,6 +14,9 @@ export type SuccessState = {
   isVisible: boolean;
   title: string;
   message: string;
+  sub1?:string;
+  cash1?:string;
+  cash2?:string;
   subMessage?: string; // Optional second message
   buttons: SuccessButton[];
   paymentData?: any; // Store payment data for PDF generation
@@ -36,6 +39,9 @@ const successSlice = createSlice({
       title?: string;
       message: string;
       subMessage?: string;
+      sub1?: string;
+      cash1?: string;
+      cash2?: string;
       buttons: SuccessButton[];
       paymentData?: any;
     }>) => {
@@ -43,6 +49,9 @@ const successSlice = createSlice({
       state.title = action.payload.title || 'Successful';
       state.message = action.payload.message;
       state.subMessage = action.payload.subMessage;
+      state.sub1 = action.payload.sub1;
+      state.cash1 = action.payload.cash1;
+      state.cash2 = action.payload.cash2;
       state.buttons = action.payload.buttons;
       state.paymentData = action.payload.paymentData;
     },

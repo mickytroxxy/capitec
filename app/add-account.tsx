@@ -101,7 +101,7 @@ export default function AddAccountScreen() {
           </View>
 
           <View style={styles.card}>
-            <TextField maxLength={10} label="Account number" value={form.account} onChangeText={(v) => dispatch(setField({ key: 'account', value: v }))} keyboardType="number-pad" />
+            <TextField maxLength={12} label="Account number" value={form.account} onChangeText={(v) => dispatch(setField({ key: 'account', value: v }))} keyboardType="number-pad" />
             <View style={{height:0.7,backgroundColor:colors.borderColor}}/>
             <TextField label="Choose bank" isDropdown value={form.bank} onChangeText={() => {}} editable={false} rightChevron onPressRight={() => router.push('/choose-bank')} />
           </View>

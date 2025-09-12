@@ -3,13 +3,20 @@ import LinearButton from '@/components/ui/LinearButton';
 import { colors } from '@/constants/Colors';
 import { Fonts } from '@/constants/Fonts';
 import { useAuth } from '@/hooks/useAuth';
+import { FontAwesome } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React from 'react';
-import { Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { CurvedBottomBarExpo } from 'react-native-curved-bottom-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+
 const {width} = Dimensions.get('screen')
 export default function SignInScreen() {
   const {accountInfo} = useAuth();
+
+  const renderTabBar = () => null;
+
   return (
     <SafeAreaView style={styles.container}>
       
@@ -58,6 +65,37 @@ export default function SignInScreen() {
           <LinearButton title="Sign In" onPress={() => router.push({pathname:'/enter-pin',params:{action:'old'}})} />
         </View>
       </ScrollView>
+
+      <View>
+        <CurvedBottomBarExpo.Navigator
+          type="UP"
+          style={styles.bottomBar}
+          shadowStyle={styles.shawdow}
+          height={55}
+          circleWidth={50}
+          bgColor="white"
+          initialRouteName="title1"
+          borderTopLeftRight
+          renderCircle={() => (
+            <View>
+              <Animated.View style={styles.btnCircleUp}>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => {}}
+              >
+                <FontAwesome name={'qrcode'} color={colors.white} size={36} />
+              </TouchableOpacity>
+              
+            </Animated.View>
+            <Text style={{marginTop:-25,fontFamily:Fonts.fontRegular}}>Scan to pay</Text>
+            </View>
+          )}
+          tabBar={renderTabBar}
+        >
+        <CurvedBottomBarExpo.Screen name="title1" position="LEFT" component={() => <View />} />
+        <CurvedBottomBarExpo.Screen name="title2" component={() => <View />}/>
+      </CurvedBottomBarExpo.Navigator>
+      </View>
     </SafeAreaView>
   );
 }
@@ -83,5 +121,61 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
   },
   tileLabel: { fontFamily: Fonts.fontLight, color: '#111', textAlign: 'center' },
+
+  shawdow: {
+    shadowColor: '#DDDDDD',
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 5,
+    elevation:10
+  },
+  button: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  bottomBar: {},
+  btnCircleUp: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft:8,
+    backgroundColor: colors.primary,
+    bottom: 25,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 100,
+  },
+  imgCircle: {
+    width: 30,
+    height: 30,
+    tintColor: 'gray',
+  },
+  tabbarItem: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  img: {
+    width: 30,
+    height: 30,
+  },
+  screen1: {
+    flex: 1,
+    backgroundColor: '#BFEFFF',
+  },
+  screen2: {
+    flex: 1,
+    backgroundColor: '#FFEBCD',
+  },
 });
 

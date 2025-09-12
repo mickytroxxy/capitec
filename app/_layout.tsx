@@ -120,6 +120,12 @@ export default function RootLayout() {
                 <Icon name="more-vertical" type="Feather" size={24} color={colors.white} />
               </View>,
             }} />
+            <Stack.Screen name="success-status" options={{
+              headerShown: false,
+              statusBarStyle: 'light',
+              statusBarBackgroundColor: colors.tertiary,
+              statusBarTranslucent: false,
+            }} />
           </Stack>
           <Loader/>
         </SafeAreaProvider>

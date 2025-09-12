@@ -56,8 +56,10 @@ export const useProof = () => {
                 data = {...data,notificationValue:phoneNo}
             }
         }
+        console.log(data)
         try {
             const response = await fetchData({endPoint:'/proof',method:'POST',data});
+            console.log(response)
             if(response?.url){
                 if(data.notificationType === 'SHARE'){
                     const url = BASE_URL + response?.url;
@@ -97,8 +99,22 @@ export const useProof = () => {
         }
     }
 
+    const shareTextMessage = async (message: string) => {
+        try {
+            const { Share } = await import('react-native');
+            await Share.share({
+                message: message,
+                title: 'Share Payment Notification',
+            });
+        } catch (error) {
+            console.error('Error sharing text:', error);
+            Alert.alert('Error', 'Failed to share message');
+        }
+    }
+
     return {
         generateProofOfPayment,
-        sharePDF
+        sharePDF,
+        shareTextMessage
     }
 }
