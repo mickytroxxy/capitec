@@ -58,6 +58,7 @@ const groups: { id: string; items: TransactItem[] }[] = [
       { id: 'debit-orders', title: 'Debit orders', icon: { name: 'calendar', type: 'Feather' } },
       { id: 'sars-efiling', title: 'SARS eFiling', icon: { name: 'percent', type: 'Feather' } },
       { id: 'load-account', title: 'Load Account', icon: { name: 'credit-card', type: 'Feather' }, onPress: () => router.push('/load-account') },
+      { id: 'account-settings', title: 'Settings', icon: { name: 'settings', type: 'Feather' }, onPress: () => router.push('/settings') },
     ],
   },
 ];

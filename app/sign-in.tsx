@@ -39,29 +39,31 @@ export default function SignInScreen() {
             </View>
           </View>
         </View>
-        <View style={styles.grid}>
-          <TouchableOpacity style={styles.tile}>
-            <Icon name="smartphone" type="Feather" size={24} color={colors.primary} />
-            <Text style={styles.tileLabel}>Buy airtime and data</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.tile}>
-            <Icon name="zap" type="Feather" size={24} color={colors.primary} />
-            <Text style={styles.tileLabel}>Buy electricity</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.tile}>
-            <Icon name="compare-arrows" type="MaterialIcons" size={24} color={colors.primary} />
-            <Text style={styles.tileLabel}>Transfer money</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.tile}>
-            <Icon name="qr-code" type="MaterialIcons" size={24} color={colors.primary} />
-            <Text style={styles.tileLabel}>Pay me</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.tile}>
-            <Icon name="file-text" type="Feather" size={24} color={colors.primary} />
-            <Text style={styles.tileLabel}>Pay bills</Text>
-          </TouchableOpacity>
+        <View style={{alignItems:'center', justifyContent:'center',alignContent:'center'}}>
+          <View style={styles.grid}>
+            <TouchableOpacity style={styles.tile}>
+              <Icon name="smartphone" type="Feather" size={24} color={colors.primary} />
+              <Text style={styles.tileLabel}>Buy airtime and data</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.tile}>
+              <Icon name="zap" type="Feather" size={24} color={colors.primary} />
+              <Text style={styles.tileLabel}>Buy electricity</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.tile}>
+              <Icon name="compare-arrows" type="MaterialIcons" size={24} color={colors.primary} />
+              <Text style={styles.tileLabel}>Transfer money</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.tile}>
+              <Icon name="qr-code" type="MaterialIcons" size={24} color={colors.primary} />
+              <Text style={styles.tileLabel}>Pay me</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.tile,]}>
+              <Icon name="file-text" type="Feather" size={24} color={colors.primary} />
+              <Text style={styles.tileLabel}>Pay bills</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        <View style={{ width: '100%', paddingHorizontal: 16, marginTop: 10 }}>
+        <View style={{ width: '100%', paddingHorizontal: 16, marginTop: 10,paddingBottom:400 }}>
           <LinearButton title="Sign In" onPress={() => router.push({pathname:'/enter-pin',params:{action:'old'}})} />
         </View>
       </ScrollView>
@@ -73,9 +75,9 @@ export default function SignInScreen() {
           shadowStyle={styles.shawdow}
           height={55}
           circleWidth={50}
+          
           bgColor="white"
           initialRouteName="title1"
-          borderTopLeftRight
           renderCircle={() => (
             <View>
               <Animated.View style={styles.btnCircleUp}>
@@ -83,11 +85,11 @@ export default function SignInScreen() {
                 style={styles.button}
                 onPress={() => {}}
               >
-                <FontAwesome name={'qrcode'} color={colors.white} size={36} />
+                <FontAwesome name={'qrcode'} color={colors.white} size={24} />
               </TouchableOpacity>
               
             </Animated.View>
-            <Text style={{marginTop:-25,fontFamily:Fonts.fontRegular}}>Scan to pay</Text>
+            <Text style={{marginTop:-15,fontFamily:Fonts.fontRegular}}>Scan to pay</Text>
             </View>
           )}
           tabBar={renderTabBar}
@@ -109,7 +111,7 @@ const styles = StyleSheet.create({
   pill: { backgroundColor: '#e6f4fd', borderRadius: 18, paddingHorizontal: 16, paddingVertical: 6 },
   pillText: { color: colors.primary, fontFamily: Fonts.fontBold },
   name: { color: '#333', marginTop: 8, fontFamily: Fonts.fontBold, letterSpacing: 2 },
-  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, padding: 16,marginTop:-35 },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginTop:-35,paddingHorizontal:'2%' },
   tile: { 
     width: '48%', 
     backgroundColor: '#fff', 
@@ -123,13 +125,13 @@ const styles = StyleSheet.create({
   tileLabel: { fontFamily: Fonts.fontLight, color: '#111', textAlign: 'center' },
 
   shawdow: {
-    shadowColor: '#DDDDDD',
+    shadowColor: '#292626ff',
     shadowOffset: {
-      width: 0,
-      height: 0,
+      width: 10,
+      height: 10,
     },
-    shadowOpacity: 1,
-    shadowRadius: 5,
+    shadowOpacity: 100,
+    shadowRadius: 500,
     elevation:10
   },
   button: {
@@ -138,14 +140,14 @@ const styles = StyleSheet.create({
   },
   bottomBar: {},
   btnCircleUp: {
-    width: 60,
-    height: 60,
+    width: 45,
+    height: 45,
     borderRadius: 30,
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft:8,
+    marginLeft:15,
     backgroundColor: colors.primary,
-    bottom: 25,
+    bottom: 20,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,

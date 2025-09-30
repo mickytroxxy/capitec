@@ -1,6 +1,6 @@
 import { AccountBalance } from '@/components/payments/AccountBalance';
 import { History } from '@/components/payments/History';
-import ConfirmAddBeneficiaryModal from '@/components/ui/ConfirmAddBeneficiaryModal';
+import ConfirmPaymentModal from '@/components/ui/ConfirmPaymentModal';
 import Icon from '@/components/ui/Icon';
 import LinearButton from '@/components/ui/LinearButton';
 import TextField from '@/components/ui/TextField';
@@ -46,6 +46,8 @@ export default function PaymentFormScreen() {
   const [paymentType, setPaymentType] = useState<'normal' | 'immediate'>('normal');
   const [currentPaymentId, setCurrentPaymentId] = useState<string>('');
   const isCapitec = bankName.toLowerCase().includes('capitec');
+  const {capitecAllowed,immediateAllowed,capitecErrorMsg,immediateErrorMsg} = useSelector((state: RootState) => state.settings);
+  
   const validateAmount = (value: string) => {
     if (!value.trim()) {
       return 'Amount is required';
@@ -164,8 +166,19 @@ export default function PaymentFormScreen() {
 
     try {
       setIsProcessing(true);
-      if(paymentType === 'immediate' || isCapitec){
-        router.push('/error');
+      //if(paymentType === 'immediate' || isCapitec){
+      // if(isCapitec){
+      //   router.push('/error');
+      //   dispatch(setLoadingState({isloading:false,type:'spinner'}))
+      //   return;
+      // }
+      if(!capitecAllowed && isCapitec){
+        router.push({pathname:'/error',params:{message:capitecErrorMsg}});
+        dispatch(setLoadingState({isloading:false,type:'spinner'}))
+        return;
+      }
+      if(!immediateAllowed){
+        router.push({pathname:'/error',params:{message:immediateErrorMsg}});
         dispatch(setLoadingState({isloading:false,type:'spinner'}))
         return;
       }
@@ -379,7 +392,7 @@ export default function PaymentFormScreen() {
                 onChangeText={() => {}}
                 editable={false}
                 rightChevron
-                onPressRight={() => router.push({ pathname: '/payment-notification', params: { account: form?.account, paymentId: currentPaymentId } as any })}
+                onPressRight={() => router.push({ pathname: '/payment-notification', params: { account: form?.account} as any })}
               />
             </View>
 
@@ -420,13 +433,15 @@ export default function PaymentFormScreen() {
           </View>
         )}
       </ScrollView>
-      <ConfirmAddBeneficiaryModal
+      <ConfirmPaymentModal
         visible={modal}
         onClose={() => setModal(false)}
         onConfirm={onConfirm}
-        title={`You are about to pay ${currencyFormatter(totalAmount)} to ${beneficiaryName}`}
+        title={`You are about to make payment to ${beneficiaryName}`}
         bankName={bankName}
         accountNumber={accountNumber}
+        beneficiaryName = {beneficiaryName}
+        amount = {currencyFormatter(totalAmount - paymentFee)}
       />
     </SafeAreaView>
   );

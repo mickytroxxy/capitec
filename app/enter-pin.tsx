@@ -56,7 +56,7 @@ export default function EnterPinScreen() {
       }} />
       <ScrollView contentContainerStyle={{ padding: 16 }} showsVerticalScrollIndicator={false}>
         <View style={{alignItems:'center'}}>
-          <Image source={require('../assets/images/gone.jpeg')} style={{ width: '80%', height: 62 }} resizeMode="cover" />
+          <Image source={require('../assets/images/gone.jpeg')} style={{ width: '80%', height: 62 }} resizeMode="contain" />
         </View>
         <View style={{marginTop:30,flexDirection:'row'}}>
           <View style={{flex:1}}><Text style={styles.label}>Enter app PIN</Text></View>

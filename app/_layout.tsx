@@ -4,6 +4,7 @@ import { colors } from '@/constants/Colors';
 import { Fonts } from '@/constants/Fonts';
 import { useFonts } from '@/hooks/useFonts';
 import { useFrameworkReady } from '@/hooks/useFrameworkReady';
+import { useOTA } from '@/hooks/useOTA';
 import { persistor, store } from '@/state/store';
 import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
@@ -47,7 +48,8 @@ export default function RootLayout() {
   const [notification, setNotification] = useState<Notifications.Notification | undefined>(
     undefined
   );
-
+  const ota = useOTA();
+  
   useEffect(() => {
     registerForPushNotificationsAsync().then(token => {
       if(token){

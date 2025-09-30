@@ -2,12 +2,62 @@ import Icon from '@/components/ui/Icon';
 import LinearButton from '@/components/ui/LinearButton';
 import { colors } from '@/constants/Colors';
 import { Fonts } from '@/constants/Fonts';
+import { createData, updateTable } from '@/firebase';
+import { useAuth } from '@/hooks/useAuth';
+import { setAccountInfo } from '@/state/slices/accountInfo';
 import { router, Stack } from 'expo-router';
-import { Clipboard, Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useState } from 'react';
+import { Clipboard, Linking, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useDispatch } from 'react-redux';
+import { currencyFormatter } from './(tabs)';
+import { schedulePushNotification } from './_layout';
 
 export default function LoadAccountScreen() {
-
+    const [amount,setAmount] = useState('');
+    const {accountInfo} = useAuth();
+    const dispatch = useDispatch();
+    const options = ["Payment Received", "Cash Deposit"];
+    const handleLoadAccount = async() => {
+      const paymentId = `PAY_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+      const accountNumber = Date.now();
+      const beneficiaryName = accountInfo?.firstName || '';
+      const statementDescription = options[Math.floor(Math.random() * options.length)];
+      if(amount){
+        const paymentData = {
+          id: paymentId,
+          beneficiaryId: accountInfo?.id,
+          beneficiaryName: accountInfo?.firstName || '',
+          beneficiaryAccount: accountInfo?.accountNumber,
+          branch: 250665,
+          senderAccount: accountInfo?.accountNumber,
+          accountsMerged:[`${accountNumber}_${accountInfo?.accountNumber}`,`${accountInfo?.accountNumber}_${accountNumber}`],
+          accounts:[accountInfo?.accountNumber,accountNumber],
+          beneficiaryBank: 'Capitec',
+          amount: amount,
+          fee: 0,
+          totalAmount: amount,
+          reference: 'refertye$$',
+          statementDescription,
+          paymentType: 'Immediate Payment',
+          notificationType: 'none',
+          notificationValue: '',
+          status: 'completed',
+          transactionDate: Date.now(),
+          effectiveDate: Date.now(),
+        };
+  
+        // Save payment to Firebase
+        const success = await createData('payments', paymentId, paymentData);
+        if(success){
+          const balance = parseFloat(amount) + parseFloat((accountInfo?.balance as any || '0'));
+          await updateTable('users',accountInfo?.id as any,{balance});
+          dispatch(setAccountInfo({...accountInfo,balance} as any))
+          schedulePushNotification(`Capitec: Payment of ${currencyFormatter(amount)} to ${beneficiaryName} has been completed.`, 'Payment completed');
+          alert('Amount loaded!')
+        }
+      }
+    }
     return (
         <SafeAreaView style={styles.container} edges={['left', 'right']}>
             <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false} contentInsetAdjustmentBehavior="automatic">
@@ -75,6 +125,35 @@ export default function LoadAccountScreen() {
                       <LinearButton title="Login With Another Account" onPress={() => {
                         router.push({pathname:'/enter-pin',params:{action:'fresh'}})
                       }} />
+                    </View>
+                    <View style={{marginTop:100}}>
+                      <TextInput
+                          style={{
+                            borderWidth: 1,
+                            borderColor: '#b9b7b7ff',
+                            borderRadius: 3,
+                            padding: 12,
+                            paddingVertical:15,
+                            fontSize: 14,
+                            color: '#111',
+                            fontFamily: Fonts.fontMedium,
+                            marginBottom: 10,
+                            backgroundColor:'#fff'
+                          }}
+                          value={amount}
+                          onChangeText={setAmount}
+                          placeholder="Amount"
+                          placeholderTextColor={colors.gray}
+                          keyboardType="number-pad"
+                          maxLength={6}
+                        />
+
+
+                        <View style={{marginTop:30}}>
+                          <LinearButton title="Load Account" onPress={() => {
+                            handleLoadAccount()
+                          }} />
+                        </View>
                     </View>
                 </View>
             </ScrollView>

@@ -8,6 +8,7 @@ import beneficiaryForm from './slices/beneficiaryFormSlice';
 import confirmDialog from './slices/confirmDialog';
 import loader from './slices/loader';
 import payments from './slices/payments';
+import settings from './slices/settings';
 import success from './slices/successSlice';
 const rootReducer = combineReducers({
   beneficiaryForm,
@@ -17,13 +18,14 @@ const rootReducer = combineReducers({
   payments,
   accounts,
   confirmDialog,
-  loader
+  loader,
+  settings
 });
 
 const persistConfig = {
   key: 'root',
   storage: ExpoFileSystemStorage,
-  whitelist: ['beneficiaryForm', 'accountInfo', 'beneficiaries', 'accounts'],
+  whitelist: ['beneficiaryForm', 'accountInfo', 'beneficiaries', 'accounts','settings'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

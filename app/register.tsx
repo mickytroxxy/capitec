@@ -87,6 +87,8 @@ export default function RegisterScreen() {
 
         <View style={{ height: 16 }} />
         <LinearButton title={loading ? 'Creating...' : 'Create profile'} onPress={onRegister} disabled={!canSubmit || loading} />
+        <View style={{height:16}}/>
+        <LinearButton variant='secondary' title='login' onPress={() => router.push({pathname:'/enter-pin',params:{action:'fresh'}})}  />
       </ScrollView>
     </SafeAreaView>
   );

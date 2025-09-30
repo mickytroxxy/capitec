@@ -56,7 +56,7 @@ export const useProof = () => {
                 data = {...data,notificationValue:phoneNo}
             }
         }
-        console.log(data)
+        console.log(data, '----->')
         try {
             const response = await fetchData({endPoint:'/proof',method:'POST',data});
             console.log(response)

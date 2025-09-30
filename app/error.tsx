@@ -1,17 +1,18 @@
 import LinearButton from '@/components/ui/LinearButton';
 import Nothing from '@/components/ui/Nothing';
 import { colors } from '@/constants/Colors';
-import { Stack, router } from 'expo-router';
+import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 export default function Error() {
+  const params = useLocalSearchParams<{ message?: string}>();
   return (
     <SafeAreaView style={styles.container} edges={['left', 'right']}>
         <Stack.Screen options={{ title: 'Error',headerLeft:() => <></> }} />
         <View style={styles.errorCard}>
-            <Nothing hasX message='Unable to process your transaction. We are aware of the issue and aim to have it resolved.' />
+            <Nothing hasX message={params?.message || ''} />
         </View>
         <View style={{marginTop:15,paddingHorizontal:16}}>
             <LinearButton title="OK" onPress={() => router.back()} />
