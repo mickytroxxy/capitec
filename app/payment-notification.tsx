@@ -213,7 +213,22 @@ You can also collect your cash at Pick n Pay, Boxer, Checkers, USave, Shoprite o
 
 For enquiries, call 0860102043`;
 
-                  shareTextMessage(message);
+                  //shareTextMessage(message);
+                  const val = selected === 'sms' ? cell : selected === 'email' ? email : '';
+                  await handleProof('SHARE',selected,val);
+                  // Show success status saying notification sent, with OK button to go back
+                  dispatch(showSuccess({
+                    title: 'Successful',
+                    message: 'Payment notification has been sent.',
+                    buttons: [
+                      {
+                        id: 'ok',
+                        title: 'OK',
+                        variant: 'primary',
+                        action: { type: 'back' },
+                      },
+                    ],
+                  } as any));
                 }}
               />
             </View>

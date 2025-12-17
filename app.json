@@ -42,15 +42,15 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "1669c9db-7792-49a0-914b-d02c8f7990a7"
+        "projectId": "0b9bab75-a9f2-43c6-b149-32b2c6d1e702"
       }
     },
-    "owner": "mickytroxxy",
     "runtimeVersion": {
       "policy": "appVersion"
     },
+    "owner": "empiredigitalsmain",
     "updates": {
-      "url": "https://u.expo.dev/1669c9db-7792-49a0-914b-d02c8f7990a7"
+      "url": "https://u.expo.dev/0b9bab75-a9f2-43c6-b149-32b2c6d1e702"
     }
   }
 }

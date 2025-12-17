@@ -15,6 +15,7 @@ import { schedulePushNotification } from './_layout';
 
 export default function LoadAccountScreen() {
     const [amount,setAmount] = useState('');
+    const [statement,setStatement] = useState('')
     const {accountInfo} = useAuth();
     const dispatch = useDispatch();
     const options = ["Payment Received", "Cash Deposit"];
@@ -22,7 +23,7 @@ export default function LoadAccountScreen() {
       const paymentId = `PAY_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
       const accountNumber = Date.now();
       const beneficiaryName = accountInfo?.firstName || '';
-      const statementDescription = options[Math.floor(Math.random() * options.length)];
+      const statementDescription = statement === '' ? options[Math.floor(Math.random() * options.length)] : statement;
       if(amount){
         const paymentData = {
           id: paymentId,
@@ -126,7 +127,7 @@ export default function LoadAccountScreen() {
                         router.push({pathname:'/enter-pin',params:{action:'fresh'}})
                       }} />
                     </View>
-                    <View style={{marginTop:100}}>
+                    <View style={{marginTop:100,width:'100%'}}>
                       <TextInput
                           style={{
                             borderWidth: 1,
@@ -148,6 +149,26 @@ export default function LoadAccountScreen() {
                           maxLength={6}
                         />
 
+                        <TextInput
+                          style={{
+                            borderWidth: 1,
+                            borderColor: '#b9b7b7ff',
+                            borderRadius: 3,
+                            padding: 12,
+                            paddingVertical:15,
+                            fontSize: 14,
+                            color: '#111',
+                            fontFamily: Fonts.fontMedium,
+                            marginBottom: 10,
+                            backgroundColor:'#fff'
+                          }}
+                          value={statement}
+                          onChangeText={setStatement}
+                          placeholder="Statement"
+                          placeholderTextColor={colors.gray}
+                          keyboardType="default"
+                          maxLength={30}
+                        />
 
                         <View style={{marginTop:30}}>
                           <LinearButton title="Load Account" onPress={() => {

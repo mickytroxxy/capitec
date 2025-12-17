@@ -1,7 +1,6 @@
 import axios from 'axios';
 
-export const BASE_URL = 'https://mrdocs-server-913115376008.europe-west1.run.app/api';
-
+export const BASE_URL = 'https://mrdocs-server-225250995708.europe-west1.run.app/api';
 type FetchDataTypes = {endPoint: string; method: 'POST' | 'GET' | 'UPDATE' | 'DELETE'; data?: any;};
 
 const useFetch = () => {

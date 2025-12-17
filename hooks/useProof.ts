@@ -50,6 +50,7 @@ export const useProof = () => {
     const generateProofOfPayment = async (data:ProofOfPayment) => {
         const notificationValue = data?.notificationValue;
         const notificationType = data?.notificationType;
+        console.log(data)
         if(notificationType === 'SMS'){
             const phoneNo = phoneNoValidation(notificationValue,'+27');
             if(phoneNo){

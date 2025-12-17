@@ -4,13 +4,16 @@ import LinearButton from '@/components/ui/LinearButton';
 import TextField from '@/components/ui/TextField';
 import { colors } from '@/constants/Colors';
 import { Fonts } from '@/constants/Fonts';
+import { createData, updateTable } from '@/firebase';
 import { useAuth } from '@/hooks/useAuth';
 import { setLoadingState } from '@/state/slices/loader';
+import { showSuccess } from '@/state/slices/successSlice';
 import { Stack, router } from 'expo-router';
 import { useState } from 'react';
 import { Alert, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { currencyFormatter } from './(tabs)';
+import { schedulePushNotification } from './_layout';
 
 export default function CashSend() {
   const [amount, setAmount] = useState('');
@@ -53,9 +56,56 @@ export default function CashSend() {
     dispatch(setLoadingState({isloading:true,type:'spinner'}));
     
     try {
-      router.push('/error');
-      dispatch(setLoadingState({isloading:false,type:'spinner'}))
-      return;
+      const cNumber = `C${Math.floor(Math.random() * 9000000000) + 1000000000}`;
+      const cashSendData = {
+        id: cNumber,
+        amount: parseFloat(amount),
+        secretCode,
+        status: 'pending',
+        createdAt: Date.now(),
+        expiresAt: Date.now() + (30 * 24 * 60 * 60 * 1000), // 30 days from now
+        senderAccount: accountInfo?.accountNumber,
+        senderName: `${accountInfo?.firstName} ${accountInfo?.lastName}`,
+      };
+
+      const success = await createData('cashsends', cNumber, cashSendData);
+
+      if (success) {
+        // Update account balance
+        const newBalance = (accountInfo?.balance || 0) - parseFloat(amount);
+        await updateTable('users', accountInfo?.id as any || '', { balance: newBalance });
+        
+        dispatch(showSuccess({
+          title: 'Successful',
+          message: `Reference number`,
+          cash1: `Send the secret code in a separate message`,
+          cash2: 'Cash not collected within 30 days will be paid back into your account',
+          sub1:cNumber,
+          buttons: [
+            {
+              id: 'share',
+              title: 'Share Reference Number',
+              variant: 'primary',
+              action: { type: 'custom', payload: 'share-reference', amount:amount } as any
+            },
+            {
+              id: 'done',
+              title: 'Done',
+              variant: 'secondary',
+              action: { type: 'replace', payload: '/(tabs)' }
+            }
+          ]
+        }));
+
+        await schedulePushNotification(
+          `Cash send of ${currencyFormatter(parseFloat(amount))} has been created successfully.`,
+          'Cash Send Created'
+        );
+        
+        router.push('/success-status');
+      } else {
+        Alert.alert('Error', 'Failed to create cash send. Please try again.');
+      }
     } catch (error) {
       console.error('Error sending cash:', error);
       Alert.alert('Error', 'Something went wrong. Please try again.');
@@ -85,7 +135,7 @@ export default function CashSend() {
                 error={amountError}
               />
 
-            <View style={{borderBottomWidth:0.7,borderBottomColor:colors.borderColor,marginHorizontal:16}} />
+            <View style={{borderBottomWidth:1,borderBottomColor:colors.borderColor,marginHorizontal:16}} />
 
             {/* Secret Code Input */}
             <TextField

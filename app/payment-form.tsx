@@ -177,7 +177,7 @@ export default function PaymentFormScreen() {
         dispatch(setLoadingState({isloading:false,type:'spinner'}))
         return;
       }
-      if(!immediateAllowed){
+      if(!immediateAllowed && paymentType === 'immediate'){
         router.push({pathname:'/error',params:{message:immediateErrorMsg}});
         dispatch(setLoadingState({isloading:false,type:'spinner'}))
         return;

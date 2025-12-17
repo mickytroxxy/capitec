@@ -9,6 +9,7 @@ import { SuccessButton } from '@/state/slices/successSlice';
 import { RootState } from '@/state/store';
 import { router, Stack } from 'expo-router';
 import * as Sharing from 'expo-sharing';
+import { StatusBar } from 'expo-status-bar';
 import React, { useMemo } from 'react';
 import { Alert, Share, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -111,6 +112,7 @@ For enquiries, call 0860102043`;
   return (
     <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
       <Stack.Screen options={{ headerShown: false }} />
+      <StatusBar backgroundColor={colors.darkGreen}/>
       {/* Success banner */}
       <View style={styles.successHeader}>
         <Text style={styles.successTitle}>{title}</Text>
