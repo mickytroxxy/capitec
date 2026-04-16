@@ -1,9 +1,9 @@
 import Icon from '@/components/ui/Icon';
 import { colors } from '@/constants/Colors';
 import { Fonts } from '@/constants/Fonts';
-import { Tabs } from 'expo-router';
+import { Tabs, Link } from 'expo-router';
 import { MessageSquareText } from 'lucide-react-native';
-import { Image, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View, TouchableOpacity } from 'react-native';
 export default function TabLayout() {
   return (
     <Tabs
@@ -34,7 +34,11 @@ export default function TabLayout() {
           title: 'Home',
           headerTitle: () => <Image source={require('../../assets/images/global.png')} resizeMode="contain" style={{width:130,height:50,alignSelf:'center'}} />,
           headerRight: () => (
-            <View style={{paddingRight:10}}><Icon name="phone-call" type="Feather" size={30} color={colors.white} /></View>
+            <Link href="/support" asChild>
+              <TouchableOpacity style={{paddingRight:10}} activeOpacity={0.7}>
+                <Icon name="phone-call" type="Feather" size={30} color={colors.white} />
+              </TouchableOpacity>
+            </Link>
           ),
           headerLeft: () => (
             <View style={{paddingLeft:10}}><Icon name="user-circle-o" type="FontAwesome" size={30} color="#fff" /></View>
@@ -122,6 +126,22 @@ export default function TabLayout() {
                 resizeMode="contain"
               />
             </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="support"
+        options={{
+          href: null, // Hidden from bottom tab bar 
+          title: 'I need to speak to someone about',
+          headerStyle: { backgroundColor: '#f5f5f5', elevation: 0, shadowOpacity: 0, borderBottomWidth: 0 },
+          headerTintColor: '#4A5E6D',
+          headerTitleStyle: { color: '#333', fontFamily: Fonts.fontMedium, fontSize: 17 },
+          headerTitleAlign: 'left',
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => require('expo-router').router.back()} style={{ paddingLeft: 16, paddingRight: 10 }}>
+              <Icon name="arrow-left" type="Feather" size={24} color="#0071CE" />
+            </TouchableOpacity>
           ),
         }}
       />

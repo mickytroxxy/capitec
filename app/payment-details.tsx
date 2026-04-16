@@ -1,45 +1,48 @@
-import LinearButton from '@/components/ui/LinearButton';
-import { colors } from '@/constants/Colors';
-import { Fonts } from '@/constants/Fonts';
-import { RootState } from '@/state/store';
-import { Stack, router, useLocalSearchParams } from 'expo-router';
-import React, { useMemo } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useSelector } from 'react-redux';
-import { currencyFormatter } from './(tabs)';
+import LinearButton from "@/components/ui/LinearButton";
+import { colors } from "@/constants/Colors";
+import { Fonts } from "@/constants/Fonts";
+import { RootState } from "@/state/store";
+import { Stack, router, useLocalSearchParams } from "expo-router";
+import React, { useMemo } from "react";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useSelector } from "react-redux";
+import { currencyFormatter } from "./(tabs)";
 
 // Only accept an ID via params; everything else is derived from the store
 export default function PaymentDetailsScreen() {
   const { paymentId } = useLocalSearchParams<{ paymentId?: string }>();
   const { payments } = useSelector((s: RootState) => s.payments);
 
-  const payment = useMemo(() => payments.find(p => p.id === paymentId), [payments, paymentId]);
+  const payment = useMemo(
+    () => payments.find((p) => p.id === paymentId),
+    [payments, paymentId],
+  );
 
   const formatDate = (dateString?: string) => {
-    if (!dateString) return '';
+    if (!dateString) return "";
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    return date.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
       hour12: false,
     });
   };
 
   const getNotificationDisplay = (type?: string) => {
-    if (type === 'sms') return 'SMS';
-    if (type === 'email') return 'Email';
-    return 'None';
+    if (type === "sms") return "SMS";
+    if (type === "email") return "Email";
+    return "None";
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['left', 'right']}>
+    <SafeAreaView style={styles.container} edges={["left", "right"]}>
       <Stack.Screen
         options={{
-          title: 'Details',
+          title: "Details",
           headerStyle: { backgroundColor: colors.primary },
           headerTintColor: colors.white,
           headerTitleStyle: { fontFamily: Fonts.fontMedium },
@@ -50,23 +53,48 @@ export default function PaymentDetailsScreen() {
         <View style={styles.content}>
           {/* Payment Details */}
           <View style={styles.detailsContainer}>
-            <DetailRow label="Beneficiary name" value={payment?.beneficiaryName || ''} />
+            <DetailRow
+              label="Beneficiary name"
+              value={payment?.beneficiaryName || ""}
+            />
             {/* Bank name (secondary) */}
-            <DetailRow label="" value={payment?.beneficiaryBank || ''} secondary />
+            <DetailRow
+              label=""
+              value={payment?.beneficiaryBank || ""}
+              secondary
+            />
             {/* Account number (strong, no label) */}
-            <DetailRow label="" value={payment?.beneficiaryAccount || ''} />
+            <DetailRow label="" value={payment?.beneficiaryAccount || ""} />
 
-            <DetailRow label="Amount" value={currencyFormatter(Number(payment?.amount || 0))} />
+            <DetailRow
+              label="Amount"
+              value={currencyFormatter(Number(payment?.amount || 0))}
+            />
 
-            <DetailRow label="From account" value={payment?.senderAccount || ''} />
+            <DetailRow
+              label="From account"
+              value={payment?.senderAccount || ""}
+            />
 
-            <DetailRow label="Beneficiary reference" value={payment?.reference || ''} />
+            <DetailRow
+              label="Beneficiary reference"
+              value={payment?.reference || ""}
+            />
 
-            <DetailRow label="My statement description" value={payment?.statementDescription || ''} />
+            <DetailRow
+              label="My statement description"
+              value={payment?.statementDescription || ""}
+            />
 
-            <DetailRow label="Transaction date" value={formatDate(payment?.transactionDate as any)} />
+            <DetailRow
+              label="Transaction date"
+              value={formatDate(payment?.transactionDate as any)}
+            />
 
-            <DetailRow label="Payment notification" value={getNotificationDisplay(payment?.notificationType)} />
+            <DetailRow
+              label="Payment notification"
+              value={getNotificationDisplay(payment?.notificationType)}
+            />
           </View>
 
           {/* Action Buttons */}
@@ -75,7 +103,14 @@ export default function PaymentDetailsScreen() {
               title="Send Payment Notification"
               onPress={() => {
                 // Placeholder: send/preview notification
-                router.push({ pathname: '/payment-notification', params: { account: payment?.beneficiaryAccount, action:'PROCEED', paymentId } as any })
+                router.push({
+                  pathname: "/payment-notification",
+                  params: {
+                    account: payment?.beneficiaryAccount,
+                    action: "PROCEED",
+                    paymentId,
+                  } as any,
+                });
               }}
             />
 
@@ -84,7 +119,14 @@ export default function PaymentDetailsScreen() {
               title="Pay Again"
               onPress={() => {
                 // Navigate back to payment form with same beneficiary
-                router.back();
+                router.push({
+                  pathname: "/payment-form",
+                  params: {
+                    account: payment?.beneficiaryAccount,
+                    action: "PROCEED",
+                    paymentId,
+                  } as any,
+                });
               }}
             />
           </View>
@@ -128,12 +170,11 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-  
   },
   detailsContainer: {
     backgroundColor: colors.white,
     padding: 16,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOpacity: 0.08,
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 3 },
@@ -152,7 +193,7 @@ const styles = StyleSheet.create({
   detailValue: {
     fontSize: 16,
     fontFamily: Fonts.fontMedium,
-    color: '#111',
+    color: "#111",
   },
   secondaryRow: {
     marginBottom: 8,

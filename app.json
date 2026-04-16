@@ -9,7 +9,8 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.mickytroxxy.capitecbank"
     },
     "android": {
       "adaptiveIcon": {
@@ -34,6 +35,29 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 26
+          }
+        }
+      ],
+      [
+        "react-native-vision-camera",
+        {
+          "cameraPermissionText": "Capitec needs access to your Camera to enable scanning and uploading of documents efficiently. By allowing camera access, you can easily digitize and share your documents through the app.",
+          "enableMicrophonePermission": true,
+          "enableCodeScanner": true,
+          "microphonePermissionText": "Capitec needs access to your Microphone to enable voice commands or audio notes for document handling and collaboration."
+        }
+      ],
+      [
+        "expo-av",
+        {
+          "microphonePermission": "Capitec requires access to your microphone for real-time AI assistant voice calls."
+        }
       ]
     ],
     "experiments": {
@@ -42,15 +66,15 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "0b9bab75-a9f2-43c6-b149-32b2c6d1e702"
+        "projectId": "471a5300-7ce4-478b-91c3-7ec6af6a6b0b"
       }
     },
     "runtimeVersion": {
       "policy": "appVersion"
     },
-    "owner": "empiredigitalsmain",
+    "owner": "deslinemayog",
     "updates": {
-      "url": "https://u.expo.dev/0b9bab75-a9f2-43c6-b149-32b2c6d1e702"
+      "url": "https://u.expo.dev/471a5300-7ce4-478b-91c3-7ec6af6a6b0b"
     }
   }
 }

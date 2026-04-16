@@ -6,19 +6,25 @@ export type AccountType = {
   accountNumber: string;
   email: string;
   phone: string;
-  balance:number;
-  pin:string;
-  active:boolean;
-  notificationToken:string;
-  title:'Mr' | 'Miss'
+  balance: number;
+  immediateAmount: number;
+  pin: string;
+  active: boolean;
+  notificationToken: string;
+  title: "Mr" | "Miss";
+  limits?: {
+    cashWithdrawals: number;
+    cardMachine: number;
+    onlineScanToPay: number;
+  };
 };
 
 const initialState: {
-  accountInfo:AccountType | null,
-  activeUser:AccountType | null
+  accountInfo: AccountType | null;
+  activeUser: AccountType | null;
 } = {
-  accountInfo:null,
-  activeUser:null
+  accountInfo: null,
+  activeUser: null,
 };
 
 const accountSlice = createSlice({
@@ -30,7 +36,7 @@ const accountSlice = createSlice({
     },
     setActiveUser: (state, action: PayloadAction<AccountType | null>) => {
       state.activeUser = action.payload;
-    }
+    },
   },
 });
 

@@ -122,6 +122,8 @@ export default function RootLayout() {
                 <Icon name="more-vertical" type="Feather" size={24} color={colors.white} />
               </View>,
             }} />
+            <Stack.Screen name="update-permanent-limits" options={{ title: 'Update Permanent Limits' }} />
+            <Stack.Screen name="set-temporary-limits" options={{ title: 'Set Temporary Limits' }} />
             <Stack.Screen name="success-status" options={{
               headerShown: false,
               statusBarStyle: 'light',
