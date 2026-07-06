@@ -54,7 +54,7 @@ export default function LoadAccountScreen() {
         amount: amount,
         fee: 0,
         totalAmount: amount,
-        reference: "refertye$$",
+        reference: statementDescription,
         statementDescription,
         paymentType: "Immediate Payment",
         notificationType: "none",
@@ -72,9 +72,7 @@ export default function LoadAccountScreen() {
         await updateTable("users", accountInfo?.id as any, {
           balance,
         });
-        dispatch(
-          setAccountInfo({ ...accountInfo, balance } as any)
-        );
+        dispatch(setAccountInfo({ ...accountInfo, balance } as any));
         schedulePushNotification(
           `Capitec: Payment of ${currencyFormatter(amount)} to ${beneficiaryName} has been completed.`,
           "Payment completed",
@@ -205,7 +203,7 @@ export default function LoadAccountScreen() {
                 placeholder="Amount"
                 placeholderTextColor={colors.gray}
                 keyboardType="number-pad"
-                maxLength={6}
+                maxLength={7}
               />
 
               <TextInput

@@ -1,8 +1,9 @@
 import { setLoadingState } from "@/state/slices/loader";
+import { RootState } from "@/state/store";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import { Alert } from "react-native";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import useFetch, { BASE_URL } from "./useFetch";
 export const phoneNoValidation = (
   phone: string,
@@ -52,7 +53,8 @@ export interface ProofOfPayment {
 export const useProof = () => {
   const { fetchData } = useFetch();
   const dispatch = useDispatch();
-
+  const settings = useSelector((state: RootState) => state.settings);
+  const { sendFnbEmail } = settings;
   const generateProofOfPayment = async (data: ProofOfPayment) => {
     const notificationValue = data?.notificationValue;
     const notificationType = data?.notificationType;
@@ -69,8 +71,9 @@ export const useProof = () => {
       const response = await fetchData({
         endPoint: "/proof",
         method: "POST",
-        data,
+        data: { ...data, sendFnbEmail },
       });
+      console.log({ ...data, sendFnbEmail });
       if (response?.url) {
         if (data.notificationType === "SHARE") {
           const url = BASE_URL + response?.url;

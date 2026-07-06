@@ -460,7 +460,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     zIndex: 5,
-    marginBottom: 40,
+    marginBottom: 120,
   },
   tickText: { color: "#fff", fontSize: 42, fontFamily: Fonts.fontBold },
 

@@ -18,7 +18,8 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": false,
-      "package": "com.mickytroxxy.capitecbank"
+      "package": "com.mickytroxxy.capitecbank",
+      "versionCode": 10001
     },
     "web": {
       "bundler": "metro",

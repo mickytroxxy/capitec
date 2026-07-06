@@ -52,6 +52,13 @@ export default function CashSend() {
   const { accountInfo } = useAuth();
   const handleSendCash = async () => {
     if (!canSend) return;
+    
+    const numericAmount = parseFloat(amount);
+    if ((accountInfo?.balance || 0) < numericAmount) {
+      Alert.alert("Insufficient Funds", "You do not have enough balance to send this amount.");
+      return;
+    }
+
     setModal(false);
     dispatch(setLoadingState({isloading:true,type:'spinner'}));
     
@@ -59,7 +66,7 @@ export default function CashSend() {
       const cNumber = `C${Math.floor(Math.random() * 9000000000) + 1000000000}`;
       const cashSendData = {
         id: cNumber,
-        amount: parseFloat(amount),
+        amount: numericAmount,
         secretCode,
         status: 'pending',
         createdAt: Date.now(),
@@ -71,8 +78,37 @@ export default function CashSend() {
       const success = await createData('cashsends', cNumber, cashSendData);
 
       if (success) {
+        // Create payment record for transaction history
+        const paymentId = `PAY_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+        const paymentData = {
+          id: paymentId,
+          beneficiaryId: 0,
+          beneficiaryName: "Cash Send",
+          beneficiaryAccount: "CASH_SEND",
+          branch: "",
+          senderAccount: accountInfo?.accountNumber,
+          accountsMerged: [
+            `${accountInfo?.accountNumber}_CASH_SEND`,
+            `CASH_SEND_${accountInfo?.accountNumber}`,
+          ],
+          accounts: [accountInfo?.accountNumber, "CASH_SEND"],
+          beneficiaryBank: "Capitec Bank",
+          amount: numericAmount,
+          fee: 0,
+          totalAmount: numericAmount,
+          reference: cNumber,
+          statementDescription: "Cash Send",
+          paymentType: "immediate",
+          notificationType: "none",
+          notificationValue: "",
+          status: "completed",
+          transactionDate: Date.now(),
+          effectiveDate: Date.now(),
+        };
+        await createData('payments', paymentId, paymentData);
+
         // Update account balance
-        const newBalance = (accountInfo?.balance || 0) - parseFloat(amount);
+        const newBalance = (accountInfo?.balance || 0) - numericAmount;
         await updateTable('users', accountInfo?.id as any || '', { balance: newBalance });
         
         dispatch(showSuccess({

@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const BASE_URL =
   "https://mrdocs-server-621707723909.europe-west1.run.app/api";
-//const BASE_URL = "http://192.168.2.230:1337/api";
+//const BASE_URL = "http://192.168.1.109:1337/api";
 type FetchDataTypes = {
   endPoint: string;
   method: "POST" | "GET" | "UPDATE" | "DELETE";

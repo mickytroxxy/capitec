@@ -9,7 +9,7 @@ import { RootState } from "@/state/store";
 import { router } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
 import {
-  ScrollView,
+  SectionList,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -82,135 +82,129 @@ export default function MainAccountScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={["left", "right"]}>
-      <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
-        {/* Blue header card */}
-        <View style={styles.headerBlue}>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 12,
-              paddingVertical: 5,
-              paddingHorizontal: 10,
-              backgroundColor: "rgba(0,0,0,0.2)",
-              marginHorizontal: 16,
-              borderRadius: 10,
-            }}
-          >
-            <View style={{ width: 22 }}></View>
-            <View style={{ flex: 1, alignItems: "center" }}>
-              <Text style={styles.available}>Available</Text>
-              <Text style={styles.availableAmount}>
-                {currencyFormatter(accountInfo?.balance || 0)}
-              </Text>
+      <SectionList
+        showsVerticalScrollIndicator={false}
+        sections={groups.map((g) => ({ title: g.label, data: g.items }))}
+        keyExtractor={(item, index) => item.id || index.toString()}
+        ListHeaderComponent={
+          <View style={styles.headerBlue}>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 12,
+                paddingVertical: 5,
+                paddingHorizontal: 10,
+                backgroundColor: "rgba(0,0,0,0.2)",
+                marginHorizontal: 16,
+                borderRadius: 10,
+              }}
+            >
+              <View style={{ width: 22 }}></View>
+              <View style={{ flex: 1, alignItems: "center" }}>
+                <Text style={styles.available}>Available</Text>
+                <Text style={styles.availableAmount}>
+                  {currencyFormatter(accountInfo?.balance || 0)}
+                </Text>
+              </View>
+              <View style={{}}>
+                <Icon name="info" type="Feather" size={22} color={"#eaf6ff"} />
+              </View>
             </View>
-            <View style={{}}>
-              <Icon name="info" type="Feather" size={22} color={"#eaf6ff"} />
+            <Text style={styles.balanceLabel}>Balance</Text>
+            <Text style={styles.balanceValue}>
+              {currency(accountInfo?.balance || 0)}
+            </Text>
+
+            {/* Tabs */}
+            <View style={styles.tabsRow}>
+              {(
+                [
+                  { key: "all", label: "All" },
+                  { key: "in", label: "Money In" },
+                  { key: "out", label: "Money Out" },
+                  { key: "track", label: "Track" },
+                ] as const
+              ).map((t) => (
+                <TouchableOpacity
+                  key={t.key}
+                  onPress={() => setTab(t.key as any)}
+                  style={[styles.tab, tab === t.key && styles.tabActive]}
+                >
+                  <Text
+                    style={[
+                      styles.tabText,
+                      tab === t.key && styles.tabTextActive,
+                    ]}
+                  >
+                    {t.label}
+                  </Text>
+                </TouchableOpacity>
+              ))}
             </View>
           </View>
-          <Text style={styles.balanceLabel}>Balance</Text>
-          <Text style={styles.balanceValue}>
-            {currency(accountInfo?.balance || 0)}
-          </Text>
-
-          {/* Tabs */}
-          <View style={styles.tabsRow}>
-            {(
-              [
-                { key: "all", label: "All" },
-                { key: "in", label: "Money In" },
-                { key: "out", label: "Money Out" },
-                { key: "track", label: "Track" },
-              ] as const
-            ).map((t) => (
+        }
+        renderSectionHeader={({ section }) => (
+          <View>
+            <View style={styles.monthHeaderRow}>
+              <Text style={styles.monthHeader}>{section.title}</Text>
               <TouchableOpacity
-                key={t.key}
-                onPress={() => setTab(t.key as any)}
-                style={[styles.tab, tab === t.key && styles.tabActive]}
+                style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
               >
+                <Text style={styles.statementLink}>Statement</Text>
+                <Icon
+                  name="chevron-right"
+                  type="Feather"
+                  size={18}
+                  color={colors.primary}
+                />
+              </TouchableOpacity>
+            </View>
+            <View style={{ height: 8 }} />
+          </View>
+        )}
+        renderItem={({ item: p, index, section }) => {
+          const isLast = index === section.data.length - 1;
+          const isCredit =
+            p.beneficiaryAccount === accountInfo?.accountNumber &&
+            !p.statementDescription?.toLowerCase().includes("fee");
+          return (
+            <View style={{ backgroundColor: colors.white }}>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                style={[styles.itemRow, !isLast && styles.itemDivider]}
+                onPress={() =>
+                  router.push({
+                    pathname: "/payment-details",
+                    params: { paymentId: p.id },
+                  })
+                }
+              >
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.itemTitle}>
+                    {p.statementDescription || p.beneficiaryName}
+                  </Text>
+                  <Text style={styles.itemSub}>
+                    {new Date(p.transactionDate).toLocaleDateString("en-GB", {
+                      day: "2-digit",
+                      month: "short",
+                    })}{" "}
+                    • {p.paymentType === "immediate" ? "Immediate" : "Transfer"}
+                  </Text>
+                </View>
                 <Text
                   style={[
-                    styles.tabText,
-                    tab === t.key && styles.tabTextActive,
+                    styles.amount,
+                    { color: isCredit ? "#2e7d32" : "#111" },
                   ]}
                 >
-                  {t.label}
+                  {isCredit ? currency(p.amount) : `-${currency(p.amount)}`}
                 </Text>
               </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-
-        {/* Edge-to-edge transaction list */}
-        <View>
-          {groups.map((g) => (
-            <View key={g.label}>
-              <View style={styles.monthHeaderRow}>
-                <Text style={styles.monthHeader}>{g.label}</Text>
-                <TouchableOpacity
-                  style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
-                >
-                  <Text style={styles.statementLink}>Statement</Text>
-                  <Icon
-                    name="chevron-right"
-                    type="Feather"
-                    size={18}
-                    color={colors.primary}
-                  />
-                </TouchableOpacity>
-              </View>
-
-              <View style={styles.listCard}>
-                {g.items.map((p: any, idx: number) => {
-                  const isLast = idx === g.items.length - 1;
-                  const isCredit =
-                    p.beneficiaryAccount === accountInfo?.accountNumber &&
-                    !p.statementDescription?.toLowerCase().includes("fee");
-                  return (
-                    <TouchableOpacity
-                      key={p.id || idx}
-                      activeOpacity={0.7}
-                      style={[styles.itemRow, !isLast && styles.itemDivider]}
-                      onPress={() =>
-                        router.push({
-                          pathname: "/payment-details",
-                          params: { paymentId: p.id },
-                        })
-                      }
-                    >
-                      <View style={{ flex: 1 }}>
-                        <Text style={styles.itemTitle}>
-                          {p.statementDescription || p.beneficiaryName}
-                        </Text>
-                        <Text style={styles.itemSub}>
-                          {new Date(p.transactionDate).toLocaleDateString(
-                            "en-GB",
-                            { day: "2-digit", month: "short" },
-                          )}{" "}
-                          •{" "}
-                          {p.paymentType === "immediate"
-                            ? "Immediate"
-                            : "Transfer"}
-                        </Text>
-                      </View>
-                      <Text
-                        style={[
-                          styles.amount,
-                          { color: isCredit ? "#2e7d32" : "#111" },
-                        ]}
-                      >
-                        {isCredit
-                          ? currency(p.amount)
-                          : `-${currency(p.amount)}`}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
             </View>
-          ))}
-        </View>
-      </ScrollView>
+          );
+        }}
+      />
     </SafeAreaView>
   );
 }

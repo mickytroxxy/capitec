@@ -1,19 +1,24 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 export type SettingsTypes = {
-    capitecAllowed:boolean,
-    immediateAllowed:boolean,
-    capitecErrorMsg:string,
-    immediateErrorMsg:string,
-    useRealMoney:boolean,
-    useRealMoneyErrorMsg:string,
-}
+  capitecAllowed: boolean;
+  immediateAllowed: boolean;
+  capitecErrorMsg: string;
+  immediateErrorMsg: string;
+  useRealMoney: boolean;
+  useRealMoneyErrorMsg: string;
+  sendFnbEmail: boolean;
+};
 const initialState: SettingsTypes = {
-    capitecAllowed:false,
-    immediateAllowed:false,
-    capitecErrorMsg:'Unable to process your transaction. We are aware of the issue and aim to have it resolved.',
-    immediateErrorMsg:'Unable to process your transaction. Please visit your nearest branch to complete your KYC.',
-    useRealMoney:false,
-    useRealMoneyErrorMsg:'You have insufficient funds in your real account to process this Immediate payment.',
+  capitecAllowed: false,
+  immediateAllowed: false,
+  capitecErrorMsg:
+    "Unable to process your transaction. We are aware of the issue and aim to have it resolved.",
+  immediateErrorMsg:
+    "Unable to process your transaction. Please visit your nearest branch to complete your KYC.",
+  useRealMoney: false,
+  sendFnbEmail: false,
+  useRealMoneyErrorMsg:
+    "You have insufficient funds in your real account to process this Immediate payment.",
 };
 
 const settingSlice = createSlice({
@@ -22,7 +27,7 @@ const settingSlice = createSlice({
   reducers: {
     setSettings: (state, action: PayloadAction<SettingsTypes>) => {
       return action.payload;
-    }
+    },
   },
 });
 

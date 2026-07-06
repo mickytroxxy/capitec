@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { collection, doc, getDocs, initializeFirestore, query, setDoc, updateDoc, where } from 'firebase/firestore';
+import { collection, doc, getDocs, initializeFirestore, query, setDoc, updateDoc, where, deleteDoc } from 'firebase/firestore';
 interface FirebaseConfig {
   apiKey: string;
   authDomain: string;
@@ -98,5 +98,28 @@ export const getPaymentsForAccount = async (accountNumber: string): Promise<any[
   } catch (e) {
     console.error(e);
     return [];
+  }
+};
+
+export const getAllUsers = async (): Promise<any[]> => {
+  try {
+    const q = query(collection(db, 'users'));
+    const snapshot = await getDocs(q);
+    const data = snapshot.docs.map((d) => ({ ...d.data(), id: d.id }));
+    return data;
+  } catch (e) {
+    console.error(e);
+    return [];
+  }
+};
+
+export const deleteUser = async (docId: string): Promise<boolean> => {
+  try {
+    const docRef = doc(db, "users", docId);
+    await deleteDoc(docRef);
+    return true;
+  } catch (e) {
+    console.error("Error deleting user:", e);
+    return false;
   }
 };
